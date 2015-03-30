@@ -3,6 +3,7 @@ package com.justmeet.justmeetdroid;
 import android.app.ActionBar;
 import android.app.Activity;
 import android.app.ProgressDialog;
+import android.content.ActivityNotFoundException;
 import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
@@ -41,6 +42,7 @@ import org.apache.http.entity.mime.content.StringBody;
 import org.apache.http.impl.client.DefaultHttpClient;
 import org.apache.http.util.EntityUtils;
 
+import java.io.ByteArrayOutputStream;
 import java.io.File;
 
 
@@ -132,43 +134,112 @@ public class EditMemberProfileActivity extends Activity {
             case PICK_IMAGE:
                 if (resultCode == Activity.RESULT_OK) {
                     Uri selectedImageUri = data.getData();
-
+                    System.out.println("selectedImageUri" + selectedImageUri);
                     try {
                         // OI FILE Manager
-                        String filemanagerstring = selectedImageUri.getPath();
+                        String fileManagerString = selectedImageUri.getPath();
 
                         // MEDIA GALLERY
                         String selectedImagePath = getPath(selectedImageUri);
 
                         if (selectedImagePath != null) {
                             filePath = selectedImagePath;
-                        } else if (filemanagerstring != null) {
-                            filePath = filemanagerstring;
+                        } else if (fileManagerString != null) {
+                            filePath = fileManagerString;
                         } else {
                             Toast.makeText(getApplicationContext(), "Unknown path",
                                     Toast.LENGTH_LONG).show();
                             Log.e("Bitmap", "Unknown path");
                         }
 
-                        if (filePath != null) {
-                            decodeFile(filePath);
+                        if (selectedImageUri != null) {
+                            cropImage(selectedImageUri);
                         } else {
                             bitmap = null;
                         }
                     } catch (Exception e) {
                         Toast.makeText(getApplicationContext(), "Internal error",
                                 Toast.LENGTH_LONG).show();
-                        Log.e(e.getClass().getName(), e.getMessage(), e);
+                        e.printStackTrace();
                     }
                 }
                 break;
+            case 2: {
+                System.out.println("RESULT CODE " + requestCode);
+                Bundle extras = data.getExtras();
+                if(extras != null){
+                    bitmap = extras.getParcelable("data");
+                    decodeFile(null);
+                }
+                    /*Uri croppedImageUri = data.getData();
+                    System.out.println("croppedImageUri " + croppedImageUri);
+                    try {
+                        // OI FILE Manager
+                        String fileManagerString = croppedImageUri.getPath();
+
+                        // MEDIA GALLERY
+                        String selectedImagePath = getPath(croppedImageUri);
+
+                        if (selectedImagePath != null) {
+                            filePath = selectedImagePath;
+                        } else if (fileManagerString != null) {
+                            filePath = fileManagerString;
+                        } else {
+                            Toast.makeText(getApplicationContext(), "Unknown path",
+                                    Toast.LENGTH_LONG).show();
+                            Log.e("Bitmap", "Unknown path");
+                        }
+
+                        if (croppedImageUri != null) {
+                            decodeFile(croppedImageUri);
+                        } else {
+                            bitmap = null;
+                        }
+                    } catch (Exception e) {
+                        Toast.makeText(getApplicationContext(), "Internal error",
+                                Toast.LENGTH_LONG).show();
+                        e.printStackTrace();
+                    }*/
+                break;
+
+            }
             default:
+        }
+    }
+
+    public void cropImage(Uri picUri)
+    {
+        System.out.println("IN CROP IMAGE METHOD " + picUri);
+        Intent cropIntent = new Intent("com.android.camera.action.CROP");
+        try
+        {
+            //cropIntent.setType("image*//*");
+            //cropIntent.setDataAndType(picUri, "image*//*");
+            //cropIntent.setAction(Intent.ACTION_GET_CONTENT);
+            cropIntent.setType("image/*");
+            cropIntent.setData(picUri);
+            cropIntent.putExtra("crop", "true");
+            cropIntent.putExtra("return-data", true);
+            cropIntent.putExtra("aspectX", 300);
+            cropIntent.putExtra("aspectY", 300);
+            cropIntent.putExtra("outputX", 300);
+            cropIntent.putExtra("outputY", 300);
+            startActivityForResult(cropIntent, 2);
+            //startActivityForResult(
+            //      Intent.createChooser(cropIntent, "Select a Picture"), 2);
+        }
+        catch (ActivityNotFoundException anfe)
+        {
+            String errorMessage = "Whoops - your device doesn't support the crop action!";
+            System.out.println("error occured : " + errorMessage);
+            anfe.printStackTrace();
+
         }
     }
 
     @SuppressWarnings("deprecation")
     public String getPath(Uri uri) {
-        String[] projection = {MediaStore.Images.Media.DATA};
+        String[] projection = { MediaStore.Images.Media.DATA };
         Cursor cursor = managedQuery(uri, projection, null, null, null);
         if (cursor != null) {
             // HERE YOU WILL GET A NULLPOINTER IF CURSOR IS NULL
@@ -183,30 +254,31 @@ public class EditMemberProfileActivity extends Activity {
 
     public void decodeFile(String filePath) {
         // Decode image size
-        BitmapFactory.Options o = new BitmapFactory.Options();
-        o.inJustDecodeBounds = true;
-        BitmapFactory.decodeFile(filePath, o);
-
-        // The new size we want to scale to
-        final int REQUIRED_SIZE = 1024;
-
-        // Find the correct scale value. It should be the power of 2.
-        int width_tmp = o.outWidth, height_tmp = o.outHeight;
-        int scale = 1;
-        while (true) {
-            if (width_tmp < REQUIRED_SIZE && height_tmp < REQUIRED_SIZE)
-                break;
-            width_tmp /= 2;
-            height_tmp /= 2;
-            scale *= 2;
-        }
-
-        // Decode with inSampleSize
         BitmapFactory.Options o2 = new BitmapFactory.Options();
-        o2.inSampleSize = scale;
-        bitmap = BitmapFactory.decodeFile(filePath, o2);
-
-        imgView.setImageBitmap(bitmap);
+        //bitmap = BitmapFactory.decodeFile(imageUri.getPath(), o2);
+        ByteArrayOutputStream bos1 = new ByteArrayOutputStream();
+        bitmap.compress(Bitmap.CompressFormat.JPEG, 100, bos1);
+        byte[] data1 = bos1.toByteArray();
+        System.out.println("Size : Before *** " + bitmap.getByteCount());
+        System.out.println("BOS Size : Before *** " + bos1.size()/1024);
+        System.out.println("Data Size : Before *** " + data1.length/1024);
+        ByteArrayOutputStream bos = new ByteArrayOutputStream();
+        bitmap.compress(Bitmap.CompressFormat.JPEG, 30, bos);
+        byte[] data = bos.toByteArray();
+        System.out.println("BOS Size : After *** " + bos.size()/1024);
+        System.out.println("Data Size : After *** " + data.length/1024);
+        //ByteArrayBody bab = new ByteArrayBody(data, imageUri.getPath());
+        //System.out.println("BAB Size : *** " + bab.getContentLength());
+        if (bos.size()/1024 > 4096) {
+            Toast.makeText(getApplicationContext(),
+                    "Please select a smaller image!!", Toast.LENGTH_LONG)
+                    .show();
+        } else {
+            Toast.makeText(getApplicationContext(),
+                    "Selected image has been set!!", Toast.LENGTH_LONG)
+                    .show();
+            imgView.setImageBitmap(BitmapFactory.decodeByteArray(data,0,data.length));
+        }
     }
 
     private void populateDetails(User user) {
