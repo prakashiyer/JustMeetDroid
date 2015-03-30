@@ -62,5 +62,7 @@
     <string name="leave_group">Exit Group</string>
     <string name="add_members">Add...</string>
     <string name="edit_group_button_text">Edit Group</string>
+    <string name="user_search_hint"><![CDATA[Search & Invite people]]></string>
+    <string name="group_search_hint"><![CDATA[Search & Invite groups]]></string>
 
 </resources>

@@ -91,14 +91,44 @@
         <!-- View Existing Members Activity -->
         <activity
             android:name="com.justmeet.justmeetdroid.ViewExistingMembersActivity"
-            android:label="@string/app_name"
-            android:screenOrientation="portrait"></activity>
+            android:screenOrientation="portrait"
+            android:label="@string/app_name" >
+            <intent-filter>
+                <action android:name="android.intent.action.SEARCH" />
+            </intent-filter>
+
+            <meta-data
+                android:name="android.app.searchable"
+                android:resource="@xml/user_searchable" />
+        </activity>
+
+        <!-- Invite New Members Activity -->
+        <activity
+            android:name="com.justmeet.justmeetdroid.InviteMembersActivity"
+            android:screenOrientation="portrait"
+            android:label="@string/app_name" >
+            <intent-filter>
+                <action android:name="android.intent.action.SEARCH" />
+            </intent-filter>
+
+            <meta-data
+                android:name="android.app.searchable"
+                android:resource="@xml/user_searchable" />
+        </activity>
 
         <!-- View Existing Groups Activity -->
         <activity
             android:name="com.justmeet.justmeetdroid.ViewExistingGroupsActivity"
             android:label="@string/app_name"
-            android:screenOrientation="portrait"></activity>
+            android:screenOrientation="portrait">
+            <intent-filter>
+                <action android:name="android.intent.action.SEARCH" />
+            </intent-filter>
+
+            <meta-data
+                android:name="android.app.searchable"
+                android:resource="@xml/group_searchable" />
+        </activity>
 
         <!-- Appointment Activity -->
         <activity
