@@ -1,0 +1,44 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:gravity="center"
+    android:orientation="vertical"
+    android:id="@+id/plans">
+
+    <TextView
+        android:id="@+id/upcomingPlanListLabel"
+        android:layout_width="fill_parent"
+        android:layout_height="wrap_content"
+        android:gravity="center"
+        android:layout_marginTop="@dimen/top_margin_30"
+        android:text="@string/plans_list_label_text"
+        android:textColor="@android:color/background_dark"
+        android:textAppearance="?android:attr/textAppearanceMedium"
+        android:textSize="@dimen/text_size_18"
+        android:textStyle="bold"
+        android:typeface="sans" />
+
+    <ListView
+        android:id="@+id/viewupcomingplansList"
+        android:layout_width="fill_parent"
+        android:layout_height="fill_parent"
+        android:background="@drawable/gradient_bg"
+        android:divider="#b5b5b5"
+        android:dividerHeight="1dp"
+        android:listSelector="@drawable/list_selector" />
+
+    <ImageButton
+        style="@style/AppTheme"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:id="@+id/createPlanBtn"
+        android:src="@drawable/ic_add_icon"
+        android:background="@drawable/fab"
+        android:layout_alignParentBottom="true"
+        android:layout_alignParentRight="true"
+        android:onClick="newPlan"
+        android:layout_marginBottom="@dimen/top_margin_45"
+        android:layout_marginRight="@dimen/top_margin_45"
+        android:layout_gravity="right|bottom" />
+</RelativeLayout>

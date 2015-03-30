@@ -1,6 +1,43 @@
 <menu xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:app="http://schemas.android.com/apk/res-auto"
-    xmlns:tools="http://schemas.android.com/tools" tools:context=".MainActivity">
-    <item android:id="@+id/action_settings" android:title="@string/action_settings"
-        android:orderInCategory="100" app:showAsAction="never" />
+    xmlns:app="http://schemas.android.com/apk/res-auto">
+
+    <item
+        android:id="@+id/viewProfile"
+        app:showAsAction="never"
+        android:title="@string/view_profile"></item>
+
+    <item
+        android:id="@+id/editPlan"
+        app:showAsAction="never"
+        android:title="@string/edit_plan"></item>
+
+    <item
+        android:id="@+id/deletePlan"
+        app:showAsAction="never"
+        android:title="@string/delete_plan"></item>
+
+    <item
+        android:id="@+id/inviteMembers"
+        app:showAsAction="never"
+        android:title="@string/add_members"></item>
+
+    <item
+        android:id="@+id/editGroup"
+        app:showAsAction="never"
+        android:title="@string/edit_group"></item>
+
+    <item
+        android:id="@+id/leaveGroup"
+        app:showAsAction="never"
+        android:title="@string/leave_group"></item>
+
+    <item
+        android:id="@+id/deleteGroup"
+        app:showAsAction="never"
+        android:title="@string/delete_group"></item>
+
+    <item
+        android:id="@+id/aboutUs"
+        app:showAsAction="never"
+        android:title="@string/action_about_us"></item>
 </menu>

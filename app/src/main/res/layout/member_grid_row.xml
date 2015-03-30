@@ -1,0 +1,27 @@
+<?xml version="1.0" encoding="utf-8"?>
+<GridLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:columnCount="1">
+
+    <ImageView
+        android:id="@+id/memberGridPicThumbnail"
+        android:layout_width="190dp"
+        android:layout_height="140dp"
+        android:layout_gravity="left|top"
+        android:background="@drawable/image_border"
+        android:src="@drawable/ic_launcher" />
+
+    <TextView
+        android:id="@+id/memberGridNameField"
+        android:layout_width="190dp"
+        android:layout_height="30dp"
+        android:layout_gravity="left|top"
+        android:background="@drawable/image_border"
+        android:gravity="center"
+        android:typeface="sans"
+        android:textStyle="bold"
+        android:textSize="@dimen/text_size_18"
+        android:textAppearance="?android:attr/textAppearanceMedium" />
+
+</GridLayout>

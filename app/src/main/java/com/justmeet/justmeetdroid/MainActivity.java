@@ -1,67 +1,51 @@
 package com.justmeet.justmeetdroid;
 
-import android.support.v7.app.ActionBarActivity;
-import android.support.v7.app.ActionBar;
-import android.support.v4.app.Fragment;
+import android.accounts.Account;
+import android.accounts.AccountManager;
+import android.app.ActionBar;
+import android.app.Activity;
+import android.content.Intent;
+import android.content.SharedPreferences;
+import android.content.res.Resources;
+import android.graphics.drawable.Drawable;
 import android.os.Bundle;
-import android.view.LayoutInflater;
-import android.view.Menu;
-import android.view.MenuItem;
-import android.view.View;
-import android.view.ViewGroup;
-import android.os.Build;
+import android.util.Log;
 
+import com.justmeet.util.JMConstants;
 
-public class MainActivity extends ActionBarActivity {
+public class MainActivity extends Activity {
+
+    private static final String TAG = "MainActivity";
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        AccountManager am = AccountManager.get(this);
         setContentView(R.layout.activity_main);
-        if (savedInstanceState == null) {
-            getSupportFragmentManager().beginTransaction()
-                    .add(R.id.container, new PlaceholderFragment())
-                    .commit();
-        }
-    }
 
+        setTheme(R.style.AppTheme);
+        ActionBar aBar = getActionBar();
+        Log.i(TAG, "In Main Activity");
+        Resources res = getResources();
+        Drawable actionBckGrnd = res.getDrawable(R.drawable.actionbar);
+        aBar.setBackgroundDrawable(actionBckGrnd);
 
-    @Override
-    public boolean onCreateOptionsMenu(Menu menu) {
-        // Inflate the menu; this adds items to the action bar if it is present.
-        getMenuInflater().inflate(R.menu.menu_main, menu);
-        return true;
-    }
-
-    @Override
-    public boolean onOptionsItemSelected(MenuItem item) {
-        // Handle action bar item clicks here. The action bar will
-        // automatically handle clicks on the Home/Up button, so long
-        // as you specify a parent activity in AndroidManifest.xml.
-        int id = item.getItemId();
-
-        //noinspection SimplifiableIfStatement
-        if (id == R.id.action_settings) {
-            return true;
-        }
-
-        return super.onOptionsItemSelected(item);
-    }
-
-    /**
-     * A placeholder fragment containing a simple view.
-     */
-    public static class PlaceholderFragment extends Fragment {
-
-        public PlaceholderFragment() {
-        }
-
-        @Override
-        public View onCreateView(LayoutInflater inflater, ViewGroup container,
-                                 Bundle savedInstanceState) {
-            View rootView = inflater.inflate(R.layout.fragment_main, container, false);
-            System.out.println("New Project");
-            return rootView;
+        Account[] accounts = am.getAccountsByType(JMConstants.ACCOUNT_ADDRESS);
+        if (accounts != null && accounts.length > 0) {
+            Account account = accounts[0];
+            SharedPreferences prefs = getSharedPreferences("Prefs", Activity.MODE_PRIVATE);
+            SharedPreferences.Editor editor = prefs.edit();
+            editor.putString("userName", am.getUserData(account, "userName"));
+            editor.putString("phone", account.name);
+            editor.apply();
+            setTheme(R.style.AppTheme);
+            Log.i(TAG, "Logging as an existing user: " + account.name);
+            Intent intent = new Intent(this, HomeActivity.class);
+            startActivity(intent);
+        } else {
+            Log.i(TAG, "New User logs in");
+            Intent intent = new Intent(this, NewUserActivity.class);
+            startActivity(intent);
         }
     }
 }

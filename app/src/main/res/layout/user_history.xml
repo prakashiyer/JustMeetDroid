@@ -1,0 +1,31 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:gravity="center"
+    android:orientation="vertical"
+    android:id="@+id/plans">
+
+    <TextView
+        android:id="@+id/planHistoryLabel"
+        android:layout_width="fill_parent"
+        android:layout_height="wrap_content"
+        android:gravity="center"
+        android:layout_marginTop="@dimen/top_margin_15"
+        android:text="@string/plans_history_label_text"
+        android:textColor="@android:color/background_dark"
+        android:textAppearance="?android:attr/textAppearanceMedium"
+        android:textSize="@dimen/text_size_18"
+        android:textStyle="bold"
+        android:typeface="sans" />
+
+    <ListView
+        android:id="@+id/planHistoryList"
+        android:layout_width="fill_parent"
+        android:layout_height="fill_parent"
+        android:background="@drawable/gradient_bg"
+        android:divider="#b5b5b5"
+        android:dividerHeight="1dp"
+        android:listSelector="@drawable/list_selector" />
+
+</RelativeLayout>

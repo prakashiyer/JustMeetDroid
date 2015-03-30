@@ -1,8 +1,24 @@
 <resources>
 
+    <!--
+        Base application theme, dependent on API level. This theme is replaced
+        by AppBaseTheme from res/values-vXX/styles.xml on newer devices.
+    -->
+    <style name="AppBaseTheme" parent="android:Theme.Holo.Light.DarkActionBar"></style>
     <!-- Base application theme. -->
-    <style name="AppTheme" parent="Theme.AppCompat.Light.DarkActionBar">
+    <style name="AppTheme" parent="AppBaseTheme">
         <!-- Customize your theme here. -->
     </style>
+
+    <color name="button_text">#FFFFFF</color>
+    <color name="grey">#585858</color>
+    <color name="red">#FF0000</color>
+    <color name="green">#1D951D</color>
+    <color name="orange">#C47451</color>
+    <string name="bold_text">bold</string>
+    <color name="blue_button_border">#4476cc</color>
+    <color name="click_button_1">#FA8F2A</color>
+    <color name="click_button_2">#4476cc</color>
+    <integer name="google_play_services_version">22</integer>
 
 </resources>

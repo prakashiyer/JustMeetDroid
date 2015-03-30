@@ -1,0 +1,93 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:orientation="vertical"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:weightSum="1">
+
+    <TextView
+        android:id="@+id/newUserLabel"
+        android:layout_width="fill_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="@dimen/left_margin_15"
+        android:layout_marginTop="@dimen/top_margin_45"
+        android:text="@string/new_user_welcome"
+        android:textAppearance="?android:attr/textAppearanceMedium"
+        android:textSize="@dimen/text_size_18"
+        android:textStyle="bold"
+        android:typeface="sans" />
+
+    <EditText
+        android:id="@+id/newUserName"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="@dimen/top_margin_45"
+        android:layout_marginStart="@dimen/left_margin_15"
+        android:layout_marginEnd="@dimen/right_margin_15"
+        android:inputType="textPersonName"
+        android:hint="@string/user_name_hint"
+        android:ems="10"
+        android:textSize="@dimen/text_size_18"
+        android:typeface="sans"
+        android:layout_gravity="center_horizontal" />
+
+    <EditText
+        android:id="@+id/newUserPhone"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="@dimen/top_margin_15"
+        android:layout_marginStart="@dimen/left_margin_15"
+        android:layout_marginEnd="@dimen/right_margin_15"
+        android:inputType="phone"
+        android:hint="@string/user_phone_hint"
+        android:ems="10"
+        android:textSize="@dimen/text_size_18"
+        android:typeface="sans"
+        android:layout_gravity="center_horizontal" />
+
+    <CheckBox
+        android:id="@+id/smsCheckBox"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="@dimen/top_margin_45"
+        android:layout_marginStart="@dimen/left_margin_15"
+        android:layout_marginEnd="@dimen/right_margin_15"
+        android:ems="10"
+        android:onClick="enterCodeCheck"
+        android:text="@string/enter_code_check"
+        android:typeface="sans"
+        android:textStyle="bold"
+        android:textSize="@dimen/text_size_18" />
+
+    <EditText
+        android:id="@+id/newUserCode"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="@dimen/top_margin_15"
+        android:layout_marginStart="@dimen/left_margin_15"
+        android:layout_marginEnd="@dimen/right_margin_15"
+        android:inputType="numberPassword"
+        android:hint="@string/user_code_hint"
+        android:ems="10"
+        android:textSize="@dimen/text_size_18"
+        android:typeface="sans"
+        android:layout_gravity="center_horizontal"
+        android:visibility="invisible" />
+
+    <Button
+        android:id="@+id/registerButton"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="@dimen/top_margin_45"
+        android:layout_marginStart="@dimen/left_margin_15"
+        android:layout_marginEnd="@dimen/right_margin_15"
+        android:layout_gravity="center_horizontal"
+        android:background="@drawable/create"
+        android:onClick="logNewUser"
+        android:text="@string/register_button_text"
+        android:textColor="@color/button_text"
+        android:textSize="@dimen/text_size_18"
+        android:textStyle="bold"
+        android:typeface="sans" />
+
+</LinearLayout>

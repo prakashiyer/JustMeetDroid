@@ -1,0 +1,33 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:orientation="vertical"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent">
+
+    <ImageView
+        android:id="@+id/profilePicView"
+        android:layout_width="300dp"
+        android:layout_height="350dp"
+        android:layout_marginTop="@dimen/top_margin_45"
+        android:src="@drawable/ic_launcher"
+        android:layout_gravity="center_horizontal"
+        android:onClick="selectImage"
+        android:background="@drawable/image_border" />
+
+    <Button
+        android:id="@+id/userImageButton"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="@dimen/top_margin_45"
+        android:layout_marginStart="@dimen/left_margin_15"
+        android:layout_marginEnd="@dimen/right_margin_15"
+        android:layout_gravity="center_horizontal"
+        android:background="@drawable/create"
+        android:onClick="uploadImage"
+        android:text="@string/upload_image_button_text"
+        android:textColor="@color/button_text"
+        android:textSize="@dimen/text_size_18"
+        android:textStyle="bold"
+        android:typeface="sans" />
+
+</LinearLayout>
