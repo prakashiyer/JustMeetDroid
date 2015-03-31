@@ -27,4 +27,5 @@ dependencies {
     compile files('src/main/libs/xstream-1.4.4.jar')
     compile files('src/main/libs/gcm.jar')
     compile files('src/main/libs/apache-commons-lang.jar')
+    compile files('src/main/libs/apache-mime4j-0.6.jar')
 }
