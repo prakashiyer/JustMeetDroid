@@ -3,6 +3,7 @@ package com.justmeet.justmeetdroid;
 import android.app.ActionBar;
 import android.app.Activity;
 import android.app.ProgressDialog;
+import android.content.ActivityNotFoundException;
 import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
@@ -42,9 +43,8 @@ import org.apache.http.entity.mime.content.StringBody;
 import org.apache.http.impl.client.DefaultHttpClient;
 import org.apache.http.util.EntityUtils;
 
-import java.io.BufferedInputStream;
+import java.io.ByteArrayOutputStream;
 import java.io.File;
-import java.io.IOException;
 
 /**
  * Created by praxiyer on 20-03-2015.
@@ -117,57 +117,134 @@ public class CreateGroupActivity extends FragmentActivity {
             case PICK_IMAGE:
                 if (resultCode == Activity.RESULT_OK) {
                     Uri selectedImageUri = data.getData();
-
+                    System.out.println("selectedImageUri" + selectedImageUri);
                     try {
                         // OI FILE Manager
-                        String filemanagerstring = selectedImageUri.getPath();
+                        String fileManagerString = selectedImageUri.getPath();
 
                         // MEDIA GALLERY
                         String selectedImagePath = getPath(selectedImageUri);
 
                         if (selectedImagePath != null) {
                             filePath = selectedImagePath;
-                        } else if (filemanagerstring != null) {
-                            filePath = filemanagerstring;
+                        } else if (fileManagerString != null) {
+                            filePath = fileManagerString;
                         } else {
                             Toast.makeText(getApplicationContext(), "Unknown path",
                                     Toast.LENGTH_LONG).show();
                             Log.e("Bitmap", "Unknown path");
                         }
 
-                        if (filePath != null) {
-                            decodeFile(filePath);
+                        if (selectedImageUri != null) {
+                            cropImage(selectedImageUri);
                         } else {
                             bitmap = null;
                         }
                     } catch (Exception e) {
                         Toast.makeText(getApplicationContext(), "Internal error",
                                 Toast.LENGTH_LONG).show();
-                        Log.e(e.getClass().getName(), e.getMessage(), e);
+                        e.printStackTrace();
                     }
                 }
                 break;
+            case 2: {
+                System.out.println("RESULT CODE " + requestCode);
+                Bundle extras = data.getExtras();
+                if(extras != null){
+                    bitmap = extras.getParcelable("data");
+                    decodeFile(null);
+                }
+                    /*Uri croppedImageUri = data.getData();
+                    System.out.println("croppedImageUri " + croppedImageUri);
+                    try {
+                        // OI FILE Manager
+                        String fileManagerString = croppedImageUri.getPath();
+
+                        // MEDIA GALLERY
+                        String selectedImagePath = getPath(croppedImageUri);
+
+                        if (selectedImagePath != null) {
+                            filePath = selectedImagePath;
+                        } else if (fileManagerString != null) {
+                            filePath = fileManagerString;
+                        } else {
+                            Toast.makeText(getApplicationContext(), "Unknown path",
+                                    Toast.LENGTH_LONG).show();
+                            Log.e("Bitmap", "Unknown path");
+                        }
+
+                        if (croppedImageUri != null) {
+                            decodeFile(croppedImageUri);
+                        } else {
+                            bitmap = null;
+                        }
+                    } catch (Exception e) {
+                        Toast.makeText(getApplicationContext(), "Internal error",
+                                Toast.LENGTH_LONG).show();
+                        e.printStackTrace();
+                    }*/
+                break;
+
+            }
             default:
         }
     }
 
-    public void decodeFile(String filePath) {
-        try {
-            File file = new File(filePath);
-            FileBody fBody = new FileBody(file);
-            BufferedInputStream bis = new BufferedInputStream(fBody.getInputStream());
-            bis.mark(1024);
-            BitmapFactory.Options opts = new BitmapFactory.Options();
-            opts.inJustDecodeBounds = true;
-            BitmapFactory.decodeStream(bis, null, opts);
-            Log.i("optwidth", opts.outWidth + "");
-            bis.reset();
-            bitmap = BitmapFactory.decodeStream(bis);
+    public void cropImage(Uri picUri)
+    {
+        System.out.println("IN CROP IMAGE METHOD " + picUri);
+        Intent cropIntent = new Intent("com.android.camera.action.CROP");
+        try
+        {
+            //cropIntent.setType("image*//*");
+            //cropIntent.setDataAndType(picUri, "image*//*");
+            //cropIntent.setAction(Intent.ACTION_GET_CONTENT);
+            cropIntent.setType("image/*");
+            cropIntent.setData(picUri);
+            cropIntent.putExtra("crop", "true");
+            cropIntent.putExtra("return-data", true);
+            cropIntent.putExtra("aspectX", 300);
+            cropIntent.putExtra("aspectY", 300);
+            cropIntent.putExtra("outputX", 300);
+            cropIntent.putExtra("outputY", 300);
+            startActivityForResult(cropIntent, 2);
+            //startActivityForResult(
+            //      Intent.createChooser(cropIntent, "Select a Picture"), 2);
+        }
+        catch (ActivityNotFoundException anfe)
+        {
+            String errorMessage = "Whoops - your device doesn't support the crop action!";
+            System.out.println("error occured : " + errorMessage);
+            anfe.printStackTrace();
 
-            imgView.setImageBitmap(bitmap);
-        } catch (IOException e) {
-            Toast.makeText(getApplicationContext(), "Please select an image less than 1 MB",
-                    Toast.LENGTH_SHORT).show();
+        }
+    }
+    public void decodeFile(String filePath) {
+        // Decode image size
+        BitmapFactory.Options o2 = new BitmapFactory.Options();
+        //bitmap = BitmapFactory.decodeFile(imageUri.getPath(), o2);
+        ByteArrayOutputStream bos1 = new ByteArrayOutputStream();
+        bitmap.compress(Bitmap.CompressFormat.JPEG, 100, bos1);
+        byte[] data1 = bos1.toByteArray();
+        System.out.println("Size : Before *** " + bitmap.getByteCount());
+        System.out.println("BOS Size : Before *** " + bos1.size()/1024);
+        System.out.println("Data Size : Before *** " + data1.length/1024);
+        ByteArrayOutputStream bos = new ByteArrayOutputStream();
+        bitmap.compress(Bitmap.CompressFormat.JPEG, 30, bos);
+        byte[] data = bos.toByteArray();
+        System.out.println("BOS Size : After *** " + bos.size()/1024);
+        System.out.println("Data Size : After *** " + data.length/1024);
+        //ByteArrayBody bab = new ByteArrayBody(data, imageUri.getPath());
+        //System.out.println("BAB Size : *** " + bab.getContentLength());
+        if (bos.size()/1024 > 4096) {
+            Toast.makeText(getApplicationContext(),
+                    "Please select a smaller image!!", Toast.LENGTH_LONG)
+                    .show();
+        } else {
+            Toast.makeText(getApplicationContext(),
+                    "Selected image has been set!!", Toast.LENGTH_LONG)
+                    .show();
+            imgView.setImageBitmap(BitmapFactory.decodeByteArray(data,0,data.length));
         }
     }
 
