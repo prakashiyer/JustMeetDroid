@@ -10,6 +10,7 @@ import android.content.res.Resources;
 import android.graphics.drawable.Drawable;
 import android.os.AsyncTask;
 import android.os.Bundle;
+import android.util.Log;
 import android.widget.TextView;
 
 import com.justmeet.dao.ExpenseDAO;
@@ -30,7 +31,7 @@ import org.apache.http.util.EntityUtils;
 import java.util.List;
 
 public class ViewExpenseActivity extends Activity {
-
+    private static final String TAG = "View Expense";
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -58,6 +59,7 @@ public class ViewExpenseActivity extends Activity {
             if (expenses != null && !expenses.isEmpty()) {
                 populateExpenseDetails(expenses);
             } else {
+                Log.i(TAG, "No expense found in local DB!");
                 String searchQuery = "/fetchExpenses?phone=" + phone + "&planIndex=" + selectedPlanIndex;
                 ViewExpenseClient restClient = new ViewExpenseClient(this);
                 restClient.execute(new String[]{searchQuery});

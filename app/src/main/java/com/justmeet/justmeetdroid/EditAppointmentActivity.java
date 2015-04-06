@@ -12,6 +12,7 @@ import android.os.AsyncTask;
 import android.os.Bundle;
 import android.support.v4.app.DialogFragment;
 import android.support.v4.app.FragmentActivity;
+import android.util.Log;
 import android.view.Menu;
 import android.view.View;
 import android.widget.Button;
@@ -35,6 +36,7 @@ import org.apache.http.impl.client.DefaultHttpClient;
 import org.apache.http.util.EntityUtils;
 
 public class EditAppointmentActivity extends FragmentActivity {
+    private static final String TAG = "Edit Appointment";
     private String selectedPlan;
     private String selectedPlanIndex;
     private Menu menu;
@@ -69,6 +71,7 @@ public class EditAppointmentActivity extends FragmentActivity {
             if (plan != null) {
                 populatePlanInformation(phone, plan);
             } else {
+                Log.i(TAG, "No plan found in DB");
                 String searchQuery = "/fetchPlan?planIndex=" + selectedPlanIndex;
                 EditPlanClient restClient = new EditPlanClient(this);
                 restClient.execute(new String[]{searchQuery, phone});
@@ -333,6 +336,11 @@ public class EditAppointmentActivity extends FragmentActivity {
                     SharedPreferences.Editor editor = prefs.edit();
                     editor.putString("selectedPlanIndex", String.valueOf(plan.getId()));
                     editor.apply();
+                    //TODO Remove
+                    Plan dbplan = planDAO.fetchPlan(String.valueOf(plan.getId()));
+                    if(dbplan != null){
+                        Log.i(TAG, "Plan updated: " +dbplan.getTitle());
+                    }
                     pDlg.dismiss();
                     Intent intent = new Intent(mContext, HomeViewPlanActivity.class);
                     startActivity(intent);

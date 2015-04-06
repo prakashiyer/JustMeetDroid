@@ -274,6 +274,12 @@ public class GCMIntentService extends GCMBaseIntentService {
                                 plan.getCreator(), plan.getCreator(), endPlanTime[0] + " " + endPlanTime[1],
                                 JMUtil.listToCommaDelimitedString(groups),
                                 JMUtil.listToCommaDelimitedString(phones));
+
+                        //TODO Remove
+                        Plan dbplan = planDAO.fetchPlan(String.valueOf(plan.getId()));
+                        if(dbplan != null){
+                            Log.i(TAG, "Plan added: "+dbplan.getTitle());
+                        }
                     }
                 }
             }
@@ -304,6 +310,12 @@ public class GCMIntentService extends GCMBaseIntentService {
                         planDAO.editPlan(String.valueOf(plan.getId()), plan.getTitle(),
                                 startPlanTime[0] + " " + startPlanTime[1], plan.getLocation(),
                                 endPlanTime[0] + " " + endPlanTime[1]);
+
+                        //TODO Remove
+                        Plan dbplan = planDAO.fetchPlan(String.valueOf(plan.getId()));
+                        if(dbplan != null){
+                            Log.i(TAG, "Plan updated: "+dbplan.getTitle());
+                        }
                     }
                 }
             }
@@ -326,6 +338,16 @@ public class GCMIntentService extends GCMBaseIntentService {
                         planDAO.updateMembers(String.valueOf(plan.getId()),
                                 JMUtil.listToCommaDelimitedString(membersAttending),
                                 JMUtil.listToCommaDelimitedString(membersInvited));
+
+                        //TODO Remove
+                        Plan dbplan = planDAO.fetchPlan(String.valueOf(plan.getId()));
+                        if(dbplan != null){
+                            List<String> dbMembersAttending = dbplan.getMembersAttending();
+                            if(dbMembersAttending != null && !dbMembersAttending.isEmpty()){
+                                Log.i(TAG, "Plan member updated: "+dbMembersAttending.size());
+                            }
+
+                        }
                     }
                 }
             }
@@ -345,6 +367,15 @@ public class GCMIntentService extends GCMBaseIntentService {
                         String members = JMUtil.listToCommaDelimitedString(group.getMembers());
                         groupDAO.addGroup(group.getGroupId(), group.getName(),
                                 members, group.getImage(), group.getAdmin());
+
+                        //TODO Remove
+                        Group dbgroup = groupDAO.fetchGroup(group.getGroupId());
+                        if(dbgroup != null){
+                            if(dbgroup != null){
+                                Log.i(TAG, "Group added: "+dbgroup.getName());
+                            }
+
+                        }
                     }
                 }
             }
@@ -364,6 +395,15 @@ public class GCMIntentService extends GCMBaseIntentService {
                         String members = JMUtil.listToCommaDelimitedString(group.getMembers());
                         groupDAO.updateGroupMembers(group.getGroupId(),
                                 members);
+                        //TODO Remove
+                        Group dbgroup = groupDAO.fetchGroup(group.getGroupId());
+                        if(dbgroup != null){
+                            List<String> dbMembers = dbgroup.getMembers();
+                            if(dbgroup != null){
+                                Log.i(TAG, "Group members: "+dbMembers.size());
+                            }
+
+                        }
                     }
                 }
             }
@@ -376,6 +416,11 @@ public class GCMIntentService extends GCMBaseIntentService {
                     if (!phone.equals(expense.getPhone())) {
                         ExpenseDAO expenseDAO = new ExpenseDAO(mContext);
                         expenseDAO.addExpense(expense.getId(), expense.getPhone(), expense.getPlanId(), expense.getTitle(), Integer.valueOf(expense.getValue()));
+                        //TODO Remove
+                        List<Expense> dbexpenses = expenseDAO.fetchExpense(expense.getPhone(), expense.getPlanId());
+                        if(dbexpenses != null){
+                            Log.i(TAG, "Expense added: "+dbexpenses.size());
+                        }
                     }
                 }
             }
@@ -388,6 +433,11 @@ public class GCMIntentService extends GCMBaseIntentService {
                     if (!phone.equals(expense.getPhone())) {
                         ExpenseDAO expenseDAO = new ExpenseDAO(mContext);
                         expenseDAO.updateExpense(expense.getId(), expense.getTitle(), Integer.valueOf(expense.getValue()));
+                        //TODO Remove
+                        List<Expense> dbexpenses = expenseDAO.fetchExpense(expense.getPhone(), expense.getPlanId());
+                        if(dbexpenses != null){
+                            Log.i(TAG, "Expense added: "+dbexpenses.size());
+                        }
                     }
                 }
             }

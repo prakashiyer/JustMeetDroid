@@ -91,7 +91,7 @@ public class GroupPlansActivity extends Fragment implements OnItemClickListener 
                     // Click event for single list row
                 }
             } else {
-
+                Log.i(TAG, "No Group Plans in local DB!");
                 String searchQuery1 = "/fetchGroup?groupIndex=" + selectedGroupIndex;
                 GroupPlansClient restClient1 = new GroupPlansClient(activity);
                 restClient1.execute(new String[]{searchQuery1});

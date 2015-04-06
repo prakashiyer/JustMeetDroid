@@ -8,6 +8,7 @@ import android.content.SharedPreferences;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -40,6 +41,7 @@ import java.util.Map;
  */
 public class GroupHistoryActivity extends Fragment implements AdapterView.OnItemClickListener {
 
+    private static final String TAG = "Group History";
     Activity activity;
     ListView planListView;
     PlanListAdapter adapter;
@@ -71,6 +73,7 @@ public class GroupHistoryActivity extends Fragment implements AdapterView.OnItem
             if (plans != null && !plans.isEmpty()) {
                 populatePlanDetails(plans);
             } else {
+                Log.i(TAG, "Group History plans not found in local DB!");
                 String searchQuery = "/fetchGroupPlanHistory?groupId=" + selectedGroupIndex;
                 GroupHistoryClient restClient = new GroupHistoryClient(activity);
                 restClient.execute(new String[]{searchQuery});

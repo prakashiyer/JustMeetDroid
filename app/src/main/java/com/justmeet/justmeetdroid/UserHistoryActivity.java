@@ -8,6 +8,7 @@ import android.content.SharedPreferences;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -39,7 +40,7 @@ import java.util.Map;
  * Created by praxiyer on 08-03-2015.
  */
 public class UserHistoryActivity extends Fragment implements AdapterView.OnItemClickListener {
-
+    private static final String TAG = "User History Activity";
     Activity activity;
     ListView planListView;
     PlanListAdapter adapter;
@@ -71,6 +72,7 @@ public class UserHistoryActivity extends Fragment implements AdapterView.OnItemC
             if (plans != null && !plans.isEmpty()) {
                 populatePlanDetails(plans);
             } else {
+                Log.i(TAG, "No History in local DB!");
                 String searchQuery = "/fetchPlanHistory?phone=" + phone;
                 UserHistoryClient restClient = new UserHistoryClient(activity);
                 restClient.execute(new String[]{searchQuery});

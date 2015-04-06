@@ -8,6 +8,7 @@ import android.content.SharedPreferences;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -42,6 +43,7 @@ import java.util.Map;
  * Created by praxiyer on 08-03-2015.
  */
 public class UserGroupsActivity extends Fragment implements AdapterView.OnItemClickListener {
+    private static final String TAG = "User Groups Activity";
     Activity activity;
     GridView gridView;
     GroupListAdapter adapter;
@@ -69,6 +71,7 @@ public class UserGroupsActivity extends Fragment implements AdapterView.OnItemCl
             if (groups != null && !groups.isEmpty()) {
                 populateGroupDetails(groups);
             } else {
+                Log.i(TAG, "No Groups in local DB!");
                 String searchQuery = "/fetchExistingGroups?phone=" + phone;
                 GroupsClient restClient = new GroupsClient(activity);
                 restClient.execute(new String[]{searchQuery});

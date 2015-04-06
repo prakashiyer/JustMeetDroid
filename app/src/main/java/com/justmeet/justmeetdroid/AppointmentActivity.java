@@ -12,6 +12,7 @@ import android.os.AsyncTask;
 import android.os.Bundle;
 import android.support.v4.app.DialogFragment;
 import android.support.v4.app.FragmentActivity;
+import android.util.Log;
 import android.view.Menu;
 import android.view.View;
 import android.widget.Button;
@@ -35,6 +36,7 @@ import org.apache.http.impl.client.DefaultHttpClient;
 import org.apache.http.util.EntityUtils;
 
 public class AppointmentActivity extends FragmentActivity {
+    private static final String TAG = "Appointment Activity";
     String planEndTime = null;
     String planEndDate = null;
 
@@ -251,9 +253,15 @@ public class AppointmentActivity extends FragmentActivity {
                             startPlanTime[0] + " " + startPlanTime[1], plan.getLocation(),
                             plan.getCreator(), plan.getCreator(), endPlanTime[0] + " " + endPlanTime[1],
                             groupList, phoneList);
+
                     SharedPreferences.Editor editor = prefs.edit();
                     editor.putString("selectedPlanIndex", String.valueOf(plan.getId()));
                     editor.apply();
+                    //TODO Remove
+                    Plan dbPlan = planDAO.fetchPlan(plan.getId());
+                    if(dbPlan != null){
+                        Log.i(TAG, "Plan added successfully: "+dbPlan.getTitle());
+                    }
                     pDlg.dismiss();
                     Intent intent = new Intent(mContext, HomeViewPlanActivity.class);
                     startActivity(intent);

@@ -336,6 +336,12 @@ public class NewUserActivity extends Activity {
     private void addToPhoneDB(String name, String phone) {
         UserDAO userDAO = new UserDAO(context);
         userDAO.addUser(name, phone);
+        //TODO Remove
+        User user = userDAO.fetchUser(phone);
+        if(user != null){
+            String dbname = user.getName();
+            Log.i(TAG, "User added: "+dbname);
+        }
     }
 
     /**

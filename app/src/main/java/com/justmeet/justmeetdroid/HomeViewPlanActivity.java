@@ -44,6 +44,7 @@ import java.util.List;
  * Created by praxiyer on 01-02-2015.
  */
 public class HomeViewPlanActivity extends FragmentActivity {
+    private static final String TAG = "Home View Plan";
     ViewPager Tab;
     ActionBar actionBar;
     TabPagerAdapter TabAdapter;
@@ -361,6 +362,11 @@ public class HomeViewPlanActivity extends FragmentActivity {
                                 "", "", "delete"});
                         PlanDAO planDAO = new PlanDAO(context);
                         planDAO.deletePlan(selectedPlanIndex);
+                        //TODO Remove
+                        Plan plan = planDAO.fetchPlan(selectedPlanIndex);
+                        if(plan == null){
+                            Log.i(TAG, "Plan deleted.");
+                        }
                         Intent homeIntent = new Intent(context,
                                 HomeActivity.class);
                         startActivity(homeIntent);

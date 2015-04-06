@@ -11,6 +11,7 @@ import android.content.res.Resources;
 import android.graphics.drawable.Drawable;
 import android.os.AsyncTask;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.View;
 import android.widget.AdapterView;
 import android.widget.AdapterView.OnItemClickListener;
@@ -45,7 +46,7 @@ import java.util.Map.Entry;
 
 public class ViewExistingGroupsActivity extends Activity implements
         OnItemClickListener {
-
+    private static final String TAG = "View Groups Activity";
     GridView groupsGridView;
     GroupsGridAdapter adapter;
     List<Map<String, Group>> groupsList;
@@ -83,6 +84,7 @@ public class ViewExistingGroupsActivity extends Activity implements
 
             fetchGroupsFromPhoneDB(phone);
             if (groupsList.isEmpty()) {
+                Log.i(TAG, "No groups in local DB!");
                 String searchQuery = "/fetchExistingGroups?phone="
                         + phone;
                 ExistingGroupsClient restClient = new ExistingGroupsClient(this);

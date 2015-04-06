@@ -8,6 +8,7 @@ import android.content.Intent;
 import android.content.SharedPreferences;
 import android.os.AsyncTask;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -42,7 +43,7 @@ import java.util.Map.Entry;
 
 public class ViewMembersAttendingActivity extends Fragment implements
         OnItemClickListener {
-
+    private static final String TAG = "View Members Attending";
     GridView membersGridView;
     MemberGridAdapter adapter;
     List<Map<String, User>> membersList;
@@ -68,6 +69,7 @@ public class ViewMembersAttendingActivity extends Fragment implements
             boolean isDataFromDB = populateDataFromDB(selectedPlanIndex);
 
             if (!isDataFromDB) {
+                Log.i(TAG, "No members in Local DB");
                 String searchQuery = "/fetchPlanUsers?id=" + selectedPlanIndex;
                 MembersAttendingClient restClient = new MembersAttendingClient(activity);
                 restClient.execute(new String[]{searchQuery});

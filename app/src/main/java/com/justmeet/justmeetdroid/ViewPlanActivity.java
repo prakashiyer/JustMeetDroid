@@ -36,7 +36,7 @@ import java.util.List;
  * Created by praxiyer on 10-03-2015.
  */
 public class ViewPlanActivity extends Fragment {
-
+    private static final String TAG = "View Plan";
     private String selectedPlan;
     private String selectedPlanIndex;
     private Menu menu;
@@ -66,6 +66,7 @@ public class ViewPlanActivity extends Fragment {
             if (plan != null) {
                 populatePlanInformation(phone, plan);
             } else {
+                Log.i(TAG, "No Plan in local DB!");
                 String searchQuery = "/fetchPlan?planIndex=" + selectedPlanIndex;
                 ViewPlanClient restClient = new ViewPlanClient(activity);
                 restClient.execute(new String[]{searchQuery, phone});
@@ -78,7 +79,6 @@ public class ViewPlanActivity extends Fragment {
     }
 
     private void populatePlanInformation(String phone, Plan plan) {
-        //TODO Add Delete item in menu for Admin
         TextView planLocation = (TextView) activity.findViewById(R.id.viewPlanLocation);
         planLocation.setText(plan.getLocation());
 

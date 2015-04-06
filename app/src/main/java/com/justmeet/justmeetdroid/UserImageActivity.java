@@ -147,6 +147,14 @@ public class UserImageActivity extends ActionBarActivity {
     private void addToPhoneDB(String phone, byte[] image) {
         UserDAO userDAO = new UserDAO(this);
         userDAO.updateUserImage(phone, image);
+        User user = userDAO.fetchUser(phone);
+        //TODO Remove
+        if(user != null){
+            byte[] dbimage = user.getImage();
+            if(dbimage != null){
+                Log.i(TAG, "Image added" +dbimage.length);
+            }
+        }
     }
     public void cropImage(Uri picUri)
     {

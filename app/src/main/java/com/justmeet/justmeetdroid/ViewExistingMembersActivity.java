@@ -338,7 +338,6 @@ public class ViewExistingMembersActivity extends Activity implements
 
 
             if (response != null) {
-                System.out.println("RESPONSE: " + response);
                 XStream userXstream = new XStream();
                 userXstream.alias("UserList", UserList.class);
                 userXstream.addImplicitCollection(UserList.class, "users");

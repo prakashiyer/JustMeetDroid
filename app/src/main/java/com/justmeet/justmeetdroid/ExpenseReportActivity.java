@@ -32,7 +32,7 @@ import org.apache.http.util.EntityUtils;
 import java.util.List;
 
 public class ExpenseReportActivity extends Fragment implements OnItemClickListener {
-
+    private static final String TAG = "Expense report";
     ListView expenseReportListView;
     ExpenseListAdapter adapter;
     List<ExpenseRow> expenseRows;

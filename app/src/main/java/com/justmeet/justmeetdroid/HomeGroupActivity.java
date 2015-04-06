@@ -15,6 +15,7 @@ import android.os.AsyncTask;
 import android.os.Bundle;
 import android.support.v4.app.FragmentActivity;
 import android.support.v4.view.ViewPager;
+import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.widget.Toast;
@@ -42,6 +43,7 @@ import java.util.List;
  * Created by praxiyer on 01-02-2015.
  */
 public class HomeGroupActivity extends FragmentActivity {
+    private static final String TAG = "Home Group";
     ViewPager Tab;
     ActionBar actionBar;
     TabPagerAdapter TabAdapter;
@@ -208,6 +210,15 @@ public class HomeGroupActivity extends FragmentActivity {
                                 planDAO.updateMembers(plan.getId(),
                                         JMUtil.listToCommaDelimitedString(membersAttending),
                                         JMUtil.listToCommaDelimitedString(membersInvited));
+                            }
+                        }
+                        //TODO Remove
+                        Group dbGroup = groupDAO.fetchGroup(selectedGroupIndex);
+                        List<String> dbmembers = group.getMembers();
+                        if(dbmembers != null && !dbmembers.isEmpty()){
+                            Log.i(TAG, "Check members");
+                            if(!dbmembers.contains(phone)){
+                                Log.i(TAG, "Member removed");
                             }
                         }
                         Intent homeIntent = new Intent(context,

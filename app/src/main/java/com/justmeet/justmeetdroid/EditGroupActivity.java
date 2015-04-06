@@ -3,7 +3,6 @@ package com.justmeet.justmeetdroid;
 import android.app.ActionBar;
 import android.app.Activity;
 import android.app.ProgressDialog;
-import android.content.ActivityNotFoundException;
 import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
@@ -24,10 +23,14 @@ import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ImageView;
+import android.widget.ListView;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import com.justmeet.dao.GroupDAO;
 import com.justmeet.entity.Group;
+import com.justmeet.entity.Plan;
+import com.justmeet.entity.PlanList;
 import com.justmeet.util.JMConstants;
 import com.justmeet.util.JMUtil;
 import com.thoughtworks.xstream.XStream;
@@ -36,6 +39,7 @@ import org.apache.http.HttpEntity;
 import org.apache.http.HttpHost;
 import org.apache.http.HttpResponse;
 import org.apache.http.client.HttpClient;
+import org.apache.http.client.methods.HttpGet;
 import org.apache.http.client.methods.HttpPost;
 import org.apache.http.entity.mime.MultipartEntity;
 import org.apache.http.entity.mime.content.FileBody;
@@ -43,20 +47,25 @@ import org.apache.http.entity.mime.content.StringBody;
 import org.apache.http.impl.client.DefaultHttpClient;
 import org.apache.http.util.EntityUtils;
 
-import java.io.ByteArrayOutputStream;
+import java.io.BufferedInputStream;
 import java.io.File;
+import java.io.IOException;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 
 /**
  * Created by praxiyer on 20-03-2015.
  */
 public class EditGroupActivity extends FragmentActivity {
-
     private Context context;
     private String filePath;
     private Bitmap bitmap;
     private ImageView imgView;
     private static final int PICK_IMAGE = 1;
     private static final String TAG = "Edit Group";
+    private EditText groupNameField;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -71,7 +80,27 @@ public class EditGroupActivity extends FragmentActivity {
             aBar.setBackgroundDrawable(actionBckGrnd);
             aBar.setTitle(" Edit Group Details");
             context = getApplicationContext();
+            groupNameField = (EditText) findViewById(R.id.editGroupNameValue);
             imgView = (ImageView) findViewById(R.id.editGroupPic);
+            SharedPreferences prefs = getSharedPreferences("Prefs",
+                    Activity.MODE_PRIVATE);
+            String selectedGroupIndex = prefs.getString("selectedGroupIndex", "");
+            GroupDAO groupDAO = new GroupDAO(this);
+            Group group = groupDAO.fetchGroup(selectedGroupIndex);
+            if(group != null){
+                groupNameField.setText(group.getName());
+                byte[] image = group.getImage();
+                Bitmap img = BitmapFactory.decodeByteArray(image, 0,
+                        image.length);
+                if (img != null) {
+                    imgView.setImageBitmap(img);
+                }
+            } else {
+                Log.i(TAG, "No Group Plans in local DB!");
+                String searchQuery1 = "/fetchGroup?groupIndex=" + selectedGroupIndex;
+                GroupClient restClient = new GroupClient(this);
+                restClient.execute(new String[]{searchQuery1});
+            }
         } else {
             Intent intent = new Intent(this, RetryActivity.class);
             startActivity(intent);
@@ -95,7 +124,7 @@ public class EditGroupActivity extends FragmentActivity {
     public void editGroup(View view) {
         Button button = (Button) findViewById(R.id.editGroupButton);
         button.setTextColor(getResources().getColor(R.color.click_button_2));
-        EditText groupNameField = (EditText) findViewById(R.id.editGroupNameValue);
+        groupNameField = (EditText) findViewById(R.id.editGroupNameValue);
         SharedPreferences prefs = getSharedPreferences("Prefs",
                 Activity.MODE_PRIVATE);
         String groupId = prefs.getString("selectedGroupIndex", "");
@@ -116,134 +145,57 @@ public class EditGroupActivity extends FragmentActivity {
             case PICK_IMAGE:
                 if (resultCode == Activity.RESULT_OK) {
                     Uri selectedImageUri = data.getData();
-                    System.out.println("selectedImageUri" + selectedImageUri);
+
                     try {
                         // OI FILE Manager
-                        String fileManagerString = selectedImageUri.getPath();
+                        String filemanagerstring = selectedImageUri.getPath();
 
                         // MEDIA GALLERY
                         String selectedImagePath = getPath(selectedImageUri);
 
                         if (selectedImagePath != null) {
                             filePath = selectedImagePath;
-                        } else if (fileManagerString != null) {
-                            filePath = fileManagerString;
+                        } else if (filemanagerstring != null) {
+                            filePath = filemanagerstring;
                         } else {
                             Toast.makeText(getApplicationContext(), "Unknown path",
                                     Toast.LENGTH_LONG).show();
                             Log.e("Bitmap", "Unknown path");
                         }
 
-                        if (selectedImageUri != null) {
-                            cropImage(selectedImageUri);
+                        if (filePath != null) {
+                            decodeFile(filePath);
                         } else {
                             bitmap = null;
                         }
                     } catch (Exception e) {
                         Toast.makeText(getApplicationContext(), "Internal error",
                                 Toast.LENGTH_LONG).show();
-                        e.printStackTrace();
+                        Log.e(e.getClass().getName(), e.getMessage(), e);
                     }
                 }
                 break;
-            case 2: {
-                System.out.println("RESULT CODE " + requestCode);
-                Bundle extras = data.getExtras();
-                if(extras != null){
-                    bitmap = extras.getParcelable("data");
-                    decodeFile(null);
-                }
-                    /*Uri croppedImageUri = data.getData();
-                    System.out.println("croppedImageUri " + croppedImageUri);
-                    try {
-                        // OI FILE Manager
-                        String fileManagerString = croppedImageUri.getPath();
-
-                        // MEDIA GALLERY
-                        String selectedImagePath = getPath(croppedImageUri);
-
-                        if (selectedImagePath != null) {
-                            filePath = selectedImagePath;
-                        } else if (fileManagerString != null) {
-                            filePath = fileManagerString;
-                        } else {
-                            Toast.makeText(getApplicationContext(), "Unknown path",
-                                    Toast.LENGTH_LONG).show();
-                            Log.e("Bitmap", "Unknown path");
-                        }
-
-                        if (croppedImageUri != null) {
-                            decodeFile(croppedImageUri);
-                        } else {
-                            bitmap = null;
-                        }
-                    } catch (Exception e) {
-                        Toast.makeText(getApplicationContext(), "Internal error",
-                                Toast.LENGTH_LONG).show();
-                        e.printStackTrace();
-                    }*/
-                break;
-
-            }
             default:
         }
     }
 
-    public void cropImage(Uri picUri)
-    {
-        System.out.println("IN CROP IMAGE METHOD " + picUri);
-        Intent cropIntent = new Intent("com.android.camera.action.CROP");
-        try
-        {
-            //cropIntent.setType("image*//*");
-            //cropIntent.setDataAndType(picUri, "image*//*");
-            //cropIntent.setAction(Intent.ACTION_GET_CONTENT);
-            cropIntent.setType("image/*");
-            cropIntent.setData(picUri);
-            cropIntent.putExtra("crop", "true");
-            cropIntent.putExtra("return-data", true);
-            cropIntent.putExtra("aspectX", 300);
-            cropIntent.putExtra("aspectY", 300);
-            cropIntent.putExtra("outputX", 300);
-            cropIntent.putExtra("outputY", 300);
-            startActivityForResult(cropIntent, 2);
-            //startActivityForResult(
-            //      Intent.createChooser(cropIntent, "Select a Picture"), 2);
-        }
-        catch (ActivityNotFoundException anfe)
-        {
-            String errorMessage = "Whoops - your device doesn't support the crop action!";
-            System.out.println("error occured : " + errorMessage);
-            anfe.printStackTrace();
-
-        }
-    }
     public void decodeFile(String filePath) {
-        // Decode image size
-        BitmapFactory.Options o2 = new BitmapFactory.Options();
-        //bitmap = BitmapFactory.decodeFile(imageUri.getPath(), o2);
-        ByteArrayOutputStream bos1 = new ByteArrayOutputStream();
-        bitmap.compress(Bitmap.CompressFormat.JPEG, 100, bos1);
-        byte[] data1 = bos1.toByteArray();
-        System.out.println("Size : Before *** " + bitmap.getByteCount());
-        System.out.println("BOS Size : Before *** " + bos1.size()/1024);
-        System.out.println("Data Size : Before *** " + data1.length/1024);
-        ByteArrayOutputStream bos = new ByteArrayOutputStream();
-        bitmap.compress(Bitmap.CompressFormat.JPEG, 30, bos);
-        byte[] data = bos.toByteArray();
-        System.out.println("BOS Size : After *** " + bos.size()/1024);
-        System.out.println("Data Size : After *** " + data.length/1024);
-        //ByteArrayBody bab = new ByteArrayBody(data, imageUri.getPath());
-        //System.out.println("BAB Size : *** " + bab.getContentLength());
-        if (bos.size()/1024 > 4096) {
-            Toast.makeText(getApplicationContext(),
-                    "Please select a smaller image!!", Toast.LENGTH_LONG)
-                    .show();
-        } else {
-            Toast.makeText(getApplicationContext(),
-                    "Selected image has been set!!", Toast.LENGTH_LONG)
-                    .show();
-            imgView.setImageBitmap(BitmapFactory.decodeByteArray(data,0,data.length));
+        try {
+            File file = new File(filePath);
+            FileBody fBody = new FileBody(file);
+            BufferedInputStream bis = new BufferedInputStream(fBody.getInputStream());
+            bis.mark(1024);
+            BitmapFactory.Options opts = new BitmapFactory.Options();
+            opts.inJustDecodeBounds = true;
+            BitmapFactory.decodeStream(bis, null, opts);
+            Log.i("optwidth", opts.outWidth + "");
+            bis.reset();
+            bitmap = BitmapFactory.decodeStream(bis);
+
+            imgView.setImageBitmap(bitmap);
+        } catch (IOException e) {
+            Toast.makeText(getApplicationContext(), "Please select an image less than 1 MB",
+                    Toast.LENGTH_SHORT).show();
         }
     }
 
@@ -334,6 +286,12 @@ public class EditGroupActivity extends FragmentActivity {
                     Toast.makeText(getApplicationContext(),
                             "Your group has been edited.",
                             Toast.LENGTH_LONG).show();
+                    //TODO Remove
+                    Group dbGroup = groupDAO.fetchGroup(group.getGroupId());
+                    if(dbGroup != null){
+                        Log.i(TAG, "Group updated: "+dbGroup.getName());
+                    }
+
                     Intent intent = new Intent(mContext,
                             HomeGroupActivity.class);
                     startActivity(intent);
@@ -368,5 +326,79 @@ public class EditGroupActivity extends FragmentActivity {
     public void onBackPressed() {
         Intent intent = new Intent(this, MainActivity.class);
         startActivity(intent);
+    }
+
+    private class GroupClient extends AsyncTask<String, Integer, String> {
+
+        private Context mContext;
+        private ProgressDialog pDlg;
+
+        public GroupClient(Context mContext) {
+            this.mContext = mContext;
+        }
+
+        private void showProgressDialog() {
+
+            pDlg = new ProgressDialog(mContext);
+            pDlg.setMessage("Processing ....");
+            pDlg.setProgressStyle(ProgressDialog.STYLE_SPINNER);
+            pDlg.setCancelable(false);
+            pDlg.show();
+
+        }
+
+        @Override
+        protected void onPreExecute() {
+
+            showProgressDialog();
+
+        }
+
+        @Override
+        protected String doInBackground(String... params) {
+            String path = JMConstants.SERVICE_PATH + params[0];
+
+            //HttpHost target = new HttpHost(TARGET_HOST);
+            HttpHost target = new HttpHost(JMConstants.TARGET_HOST, 8080);
+            HttpClient client = new DefaultHttpClient();
+            HttpGet get = new HttpGet(path);
+            HttpEntity results = null;
+
+            try {
+                HttpResponse response = client.execute(target, get);
+                results = response.getEntity();
+                String result = EntityUtils.toString(results);
+                return result;
+            } catch (Exception e) {
+
+            }
+            return null;
+        }
+
+        @Override
+        protected void onPostExecute(String response) {
+
+            if (response != null && response.contains("<Group>")) {
+                Log.i(TAG, response);
+                XStream xstream = new XStream();
+                xstream.alias("Group", Group.class);
+
+                xstream.alias("members", String.class);
+                xstream.addImplicitCollection(Group.class, "members",
+                        "members", String.class);
+                Group group = (Group) xstream.fromXML(response);
+                if (group != null) {
+                    groupNameField.setText(group.getName());
+                    byte[] image = group.getImage();
+                    Bitmap img = BitmapFactory.decodeByteArray(image, 0,
+                            image.length);
+                    if (img != null) {
+                        imgView.setImageBitmap(img);
+                    }
+                }
+            }
+            pDlg.dismiss();
+        }
+
     }
 }

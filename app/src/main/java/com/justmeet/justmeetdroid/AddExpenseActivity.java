@@ -8,6 +8,7 @@ import android.content.Intent;
 import android.content.SharedPreferences;
 import android.os.AsyncTask;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -36,7 +37,7 @@ import java.util.List;
  * Created by praxiyer on 15-03-2015.
  */
 public class AddExpenseActivity extends Fragment {
-
+    private static final String TAG = "Add/Update Expense";
     private String exp1 = "";
     private String exp2 = "";
     private String exp3 = "";
@@ -149,14 +150,12 @@ public class AddExpenseActivity extends Fragment {
 
     private void updateExpense(String phone, String selectedPlanIndex, String title, String val, String exp) {
         String query = "";
-        ExpenseDAO expenseDAO = new ExpenseDAO(activity);
         if ("".equals(exp)) {
             query = "/addExpense?planIndex=" + selectedPlanIndex + "&phone=" + phone
                     + "&title=" + title + "&value=" + val;
 
         } else {
             query = "/updateExpense?id=" + exp + "&title=" + title + "&value=" + val;
-            expenseDAO.updateExpense(exp, title, Integer.valueOf(val));
         }
 
         AddExpenseClient restClient = new AddExpenseClient(activity);
@@ -295,6 +294,11 @@ public class AddExpenseActivity extends Fragment {
                 if (expense != null) {
                     ExpenseDAO expenseDAO = new ExpenseDAO(mContext);
                     expenseDAO.addExpense(expense.getId(), expense.getPhone(), expense.getPlanId(), expense.getTitle(), Integer.valueOf(expense.getValue()));
+                    //TODO Remove
+                    List<Expense> dbexpense = expenseDAO.fetchExpense(expense.getPhone(), expense.getPlanId());
+                    if(dbexpense != null && !dbexpense.isEmpty()){
+                        Log.i(TAG, "Expense added.");
+                    }
                 }
 
             } else if (response != null && query.contains("updateExpense")) {
@@ -305,6 +309,11 @@ public class AddExpenseActivity extends Fragment {
                 if (expense != null) {
                     ExpenseDAO expenseDAO = new ExpenseDAO(mContext);
                     expenseDAO.updateExpense(expense.getId(), expense.getTitle(), Integer.valueOf(expense.getValue()));
+                    //TODO Remove
+                    List<Expense> dbexpense = expenseDAO.fetchExpense(expense.getPhone(), expense.getPlanId());
+                    if(dbexpense != null && !dbexpense.isEmpty()){
+                        Log.i(TAG, "Expense updated.");
+                    }
                 }
 
             }

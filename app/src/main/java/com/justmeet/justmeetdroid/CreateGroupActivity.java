@@ -354,6 +354,11 @@ public class CreateGroupActivity extends FragmentActivity {
                     Toast.makeText(getApplicationContext(),
                             "Congratulations! Your group has been created.",
                             Toast.LENGTH_LONG).show();
+                    //TODO Remove
+                    Group dbgroup = groupDAO.fetchGroup(group.getGroupId());
+                    if(dbgroup != null){
+                        Log.i(TAG, "Group added: "+dbgroup.getName());
+                    }
                     Intent intent = new Intent(mContext,
                             HomeGroupActivity.class);
                     startActivity(intent);

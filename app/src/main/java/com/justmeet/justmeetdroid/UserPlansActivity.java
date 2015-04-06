@@ -8,6 +8,7 @@ import android.content.SharedPreferences;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -39,6 +40,7 @@ import java.util.Map;
  * Created by praxiyer on 08-03-2015.
  */
 public class UserPlansActivity extends Fragment implements AdapterView.OnItemClickListener {
+    private static final String TAG = "User Plans Activity";
     Activity activity;
     ListView planListView;
     PlanListAdapter adapter;
@@ -71,6 +73,7 @@ public class UserPlansActivity extends Fragment implements AdapterView.OnItemCli
             if (plans != null && !plans.isEmpty()) {
                 populatePlanDetails(plans);
             } else {
+                Log.i(TAG, "No Plans in local DB!");
                 String searchQuery = "/fetchUpcomingPlans?phone=" + phone;
                 PlansClient restClient = new PlansClient(activity);
                 restClient.execute(new String[]{searchQuery});

@@ -33,7 +33,7 @@ import org.apache.http.util.EntityUtils;
  * Created by praxiyer on 10-03-2015.
  */
 public class ViewOldPlanActivity extends Fragment {
-
+    private static final String TAG = "View Old plan";
     private String selectedPlan;
     private String selectedPlanIndex;
     private Menu menu;
@@ -63,6 +63,7 @@ public class ViewOldPlanActivity extends Fragment {
             if (plan != null) {
                 populatePlanInformation(phone, plan);
             } else {
+                Log.i(TAG, "No plan history in local DB!");
                 String searchQuery = "/fetchPlan?id=" + selectedPlanIndex;
                 ViewPlanClient restClient = new ViewPlanClient(activity);
                 restClient.execute(new String[]{searchQuery, phone});
@@ -75,7 +76,6 @@ public class ViewOldPlanActivity extends Fragment {
     }
 
     private void populatePlanInformation(String phone, Plan plan) {
-        //TODO Add Delete item in menu for Admin
         TextView planLocation = (TextView) activity.findViewById(R.id.viewPlanLocation);
         planLocation.setText(plan.getLocation());
 

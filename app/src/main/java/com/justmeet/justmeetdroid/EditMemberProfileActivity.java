@@ -78,6 +78,7 @@ public class EditMemberProfileActivity extends Activity {
             if (user != null && user.getName() != null) {
                 populateDetails(user);
             } else {
+                Log.i(TAG, "No user found in local DB!");
                 String userQuery = "/fetchUser?phone=" + phone;
                 MemberProfileClient userRestClient = new MemberProfileClient(this);
                 userRestClient.execute(new String[]{userQuery});
@@ -112,6 +113,12 @@ public class EditMemberProfileActivity extends Activity {
     private void addToPhoneDB(String phone, byte[] image, String name) {
         UserDAO userDAO = new UserDAO(this);
         userDAO.updateUser(phone, image, name);
+        //TODO Remove
+        User user = userDAO.fetchUser(phone);
+        if(user != null){
+            String dbname = user.getName();
+            Log.i(TAG, "User updated: "+dbname);
+        }
     }
 
     public void editImage(View view) {
