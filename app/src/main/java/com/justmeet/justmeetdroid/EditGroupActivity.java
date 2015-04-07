@@ -3,6 +3,7 @@ package com.justmeet.justmeetdroid;
 import android.app.ActionBar;
 import android.app.Activity;
 import android.app.ProgressDialog;
+import android.content.ActivityNotFoundException;
 import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
@@ -145,57 +146,62 @@ public class EditGroupActivity extends FragmentActivity {
             case PICK_IMAGE:
                 if (resultCode == Activity.RESULT_OK) {
                     Uri selectedImageUri = data.getData();
-
+                    System.out.println("selectedImageUri" + selectedImageUri);
                     try {
                         // OI FILE Manager
-                        String filemanagerstring = selectedImageUri.getPath();
+                        String fileManagerString = selectedImageUri.getPath();
 
                         // MEDIA GALLERY
                         String selectedImagePath = getPath(selectedImageUri);
 
                         if (selectedImagePath != null) {
                             filePath = selectedImagePath;
-                        } else if (filemanagerstring != null) {
-                            filePath = filemanagerstring;
+                        } else if (fileManagerString != null) {
+                            filePath = fileManagerString;
                         } else {
                             Toast.makeText(getApplicationContext(), "Unknown path",
                                     Toast.LENGTH_LONG).show();
                             Log.e("Bitmap", "Unknown path");
                         }
 
-                        if (filePath != null) {
-                            decodeFile(filePath);
+                        if (selectedImageUri != null) {
+                            cropImage(selectedImageUri);
                         } else {
                             bitmap = null;
                         }
                     } catch (Exception e) {
                         Toast.makeText(getApplicationContext(), "Internal error",
                                 Toast.LENGTH_LONG).show();
-                        Log.e(e.getClass().getName(), e.getMessage(), e);
+                        e.printStackTrace();
                     }
                 }
                 break;
+
             default:
         }
     }
 
-    public void decodeFile(String filePath) {
-        try {
-            File file = new File(filePath);
-            FileBody fBody = new FileBody(file);
-            BufferedInputStream bis = new BufferedInputStream(fBody.getInputStream());
-            bis.mark(1024);
-            BitmapFactory.Options opts = new BitmapFactory.Options();
-            opts.inJustDecodeBounds = true;
-            BitmapFactory.decodeStream(bis, null, opts);
-            Log.i("optwidth", opts.outWidth + "");
-            bis.reset();
-            bitmap = BitmapFactory.decodeStream(bis);
+    public void cropImage(Uri picUri)
+    {
+        Intent cropIntent = new Intent("com.android.camera.action.CROP");
+        try
+        {
+            cropIntent.setType("image/*");
+            cropIntent.setData(picUri);
+            cropIntent.putExtra("crop", "true");
+            cropIntent.putExtra("return-data", true);
+            cropIntent.putExtra("aspectX", 300);
+            cropIntent.putExtra("aspectY", 300);
+            cropIntent.putExtra("outputX", 300);
+            cropIntent.putExtra("outputY", 300);
+            startActivityForResult(cropIntent, 2);
+        }
+        catch (ActivityNotFoundException anfe)
+        {
+            Toast.makeText(getApplicationContext(), "This device does not support cropping",
+                    Toast.LENGTH_LONG).show();
+            Log.e("Bitmap", "This device does not support cropping");
 
-            imgView.setImageBitmap(bitmap);
-        } catch (IOException e) {
-            Toast.makeText(getApplicationContext(), "Please select an image less than 1 MB",
-                    Toast.LENGTH_SHORT).show();
         }
     }
 
