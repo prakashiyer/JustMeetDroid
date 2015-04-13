@@ -72,11 +72,15 @@ public class GroupDAO extends JMDatabaseHandler {
         Cursor cursor = db.query(GROUPS_TABLE, result_columns, where,
                 whereArgs, groupBy, having, order);
         if (cursor != null && cursor.moveToFirst()) {
-            String name = cursor.getString(3);
-            String members = cursor.getString(4);
+            int nameIndex = cursor.getColumnIndex(NAME);
+            int membersIndex = cursor.getColumnIndex(MEMBERS);
+            int imageIndex = cursor.getColumnIndex(IMAGE);
+            int adminIndex = cursor.getColumnIndex(ADMIN);
+            String name = cursor.getString(nameIndex);
+            String members = cursor.getString(membersIndex);
             List<String> membersList = Arrays.asList(StringUtils.split(members, ","));
-            byte[] image = cursor.getBlob(5);
-            String admin = cursor.getString(6);
+            byte[] image = cursor.getBlob(imageIndex);
+            String admin = cursor.getString(adminIndex);
 
             return new Group(groupId, name, membersList, admin, image, false);
         }
@@ -101,15 +105,21 @@ public class GroupDAO extends JMDatabaseHandler {
         List<Group> groups = new ArrayList<Group>();
         if (cursor != null && cursor.moveToFirst()) {
             while (!cursor.isAfterLast()) {
-                String groupId = cursor.getString(2);
-                String name = cursor.getString(3);
-                String members = cursor.getString(4);
+                int idIndex = cursor.getColumnIndex(GROUP_ID);
+                int nameIndex = cursor.getColumnIndex(NAME);
+                int membersIndex = cursor.getColumnIndex(MEMBERS);
+                int imageIndex = cursor.getColumnIndex(IMAGE);
+                int adminIndex = cursor.getColumnIndex(ADMIN);
+                String groupId = cursor.getString(idIndex);
+                String name = cursor.getString(nameIndex);
+                String members = cursor.getString(membersIndex);
                 List<String> membersList = Arrays.asList(StringUtils.split(members, ","));
-                byte[] image = cursor.getBlob(5);
-                String admin = cursor.getString(6);
+                byte[] image = cursor.getBlob(imageIndex);
+                String admin = cursor.getString(adminIndex);
 
                 Group group = new Group(groupId, name, membersList, admin, image, false);
                 groups.add(group);
+                cursor.moveToNext();
             }
         }
         cursor.close();

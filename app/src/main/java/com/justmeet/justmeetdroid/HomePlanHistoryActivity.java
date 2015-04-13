@@ -13,17 +13,17 @@ import android.widget.Toast;
  * Created by praxiyer on 01-02-2015.
  */
 public class HomePlanHistoryActivity extends FragmentActivity {
-    ViewPager Tab;
-    ActionBar actionBar;
-    TabPagerAdapter TabAdapter;
+    private ViewPager Tab;
+    private ActionBar actionBar;
+    private TabPagerAdapter TabAdapter;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.home_plan_history);
-        TabAdapter = new TabPagerAdapter(getSupportFragmentManager());
+        TabAdapter = new TabPagerAdapter(getSupportFragmentManager(),TabPagerAdapter.VIEW_HISTORY);
 
-        Tab = (ViewPager) findViewById(R.id.pager2);
+        Tab = (ViewPager) findViewById(R.id.pager3);
 
         Tab.setOnPageChangeListener(
                 new ViewPager.SimpleOnPageChangeListener() {
@@ -59,25 +59,21 @@ public class HomePlanHistoryActivity extends FragmentActivity {
                     case 0:
                         //Fragement for View Plan
                         actionBar.setTitle("Plan Details");
-                        ViewOldPlanActivity viewPlanFragment = new ViewOldPlanActivity();
                         break;
 
                     case 1:
                         //Fragment for Members Attending
                         actionBar.setTitle("Attendees");
-                        ViewMembersAttendingActivity grp = new ViewMembersAttendingActivity();
                         break;
 
                     case 2:
                         //Fragment for Expense Report
                         actionBar.setTitle("Expense Report");
-                        ExpenseReportActivity er = new ExpenseReportActivity();
                         break;
 
                     case 3:
                         //Fragment for Expense Report
                         actionBar.setTitle("Add Expense");
-                        AddExpenseActivity ae = new AddExpenseActivity();
                         break;
 
                 }

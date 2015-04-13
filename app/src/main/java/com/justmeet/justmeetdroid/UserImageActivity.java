@@ -46,7 +46,7 @@ import java.io.File;
 import java.util.concurrent.ExecutionException;
 
 
-public class UserImageActivity extends ActionBarActivity {
+public class UserImageActivity extends Activity {
     private static final String TAG = "User Image Activity";
     private static final int PICK_IMAGE = 1;
     private Bitmap bitmap;
@@ -61,6 +61,7 @@ public class UserImageActivity extends ActionBarActivity {
 
         if (JMUtil.haveInternet(this)) {
             setContentView(R.layout.profile_image_upload);
+
             ActionBar aBar = getActionBar();
             Resources res = getResources();
             Drawable actionBckGrnd = res.getDrawable(R.drawable.actionbar);
@@ -74,15 +75,16 @@ public class UserImageActivity extends ActionBarActivity {
 
             UserDAO userDAO = new UserDAO(this);
             User user = userDAO.fetchUser(phone);
-            byte[] image = user.getImage();
-
             if (user != null) {
+                Log.i(TAG, "User found in local DB!");
+                byte[] image = user.getImage();
                 if (image != null) {
                     Bitmap img = BitmapFactory.decodeByteArray(image, 0,
                             image.length);
                     imgView.setImageBitmap(img);
                 }
             } else {
+                Log.i(TAG, "No Image in local DB!");
                 UserImageFetchClient imageFetchClient = new UserImageFetchClient(this);
                 imageFetchClient.execute(
                         new String[]{"fetchUserImage", phone});
@@ -95,18 +97,26 @@ public class UserImageActivity extends ActionBarActivity {
             startActivity(intent);
         }
     }
-    public void uploadImage(View view) {
-        Button button = (Button) findViewById(R.id.userImageButton);
-        button.setTextColor(getResources().getColor(R.color.abc_primary_text_material_dark));
+
+    public void selectImage(View view) {
         try {
-            //cropImage(null);
             Intent intent = new Intent();
             intent.setType("image/*");
             intent.setAction(Intent.ACTION_GET_CONTENT);
-            System.out.println("ABC");
-
             startActivityForResult(
-                    Intent.createChooser(intent, "Select a Picture"), PICK_IMAGE);
+                    Intent.createChooser(intent, "Select an image"), PICK_IMAGE);
+        } catch (Exception e) {
+            Toast.makeText(getApplicationContext(), "Image selection failed",
+                    Toast.LENGTH_LONG).show();
+            Log.e(e.getClass().getName(), e.getMessage(), e);
+        }
+    }
+
+
+    public void uploadImage(View view) {
+        Button button = (Button) findViewById(R.id.userImageButton);
+        button.setTextColor(getResources().getColor(R.color.click_button_2));
+        try {
             if (bitmap == null) {
                 Toast.makeText(getApplicationContext(), "Please select image",
                         Toast.LENGTH_SHORT).show();
@@ -128,9 +138,9 @@ public class UserImageActivity extends ActionBarActivity {
         } catch (Exception e) {
             Toast.makeText(getApplicationContext(), "Image selection failed",
                     Toast.LENGTH_LONG).show();
-            Log.e(e.getClass().getName(), e.getMessage(), e);
+            Log.e(TAG, e.getMessage());
         }
-        button.setTextColor(getResources().getColor(R.color.abc_background_cache_hint_selector_material_light));
+        button.setTextColor(getResources().getColor(R.color.button_text));
     }
     private byte[] addToServer(String phone) {
         UserImageUploadClient restClient = new UserImageUploadClient(this);
@@ -222,43 +232,16 @@ public class UserImageActivity extends ActionBarActivity {
                 }
                 break;
             case 2: {
-                System.out.println("RESULT CODE " + requestCode);
-                Bundle extras = data.getExtras();
-                if(extras != null){
-                    bitmap = extras.getParcelable("data");
-                    decodeFile(null);
+                System.out.println("RESULT CODE " + resultCode);
+                if (resultCode == Activity.RESULT_OK) {
+                    Bundle extras = data.getExtras();
+                    if(extras != null){
+                        bitmap = extras.getParcelable("data");
+                        decodeFile(null);
+                    }
                 }
-                    /*Uri croppedImageUri = data.getData();
-                    System.out.println("croppedImageUri " + croppedImageUri);
-                    try {
-                        // OI FILE Manager
-                        String fileManagerString = croppedImageUri.getPath();
 
-                        // MEDIA GALLERY
-                        String selectedImagePath = getPath(croppedImageUri);
-
-                        if (selectedImagePath != null) {
-                            filePath = selectedImagePath;
-                        } else if (fileManagerString != null) {
-                            filePath = fileManagerString;
-                        } else {
-                            Toast.makeText(getApplicationContext(), "Unknown path",
-                                    Toast.LENGTH_LONG).show();
-                            Log.e("Bitmap", "Unknown path");
-                        }
-
-                        if (croppedImageUri != null) {
-                            decodeFile(croppedImageUri);
-                        } else {
-                            bitmap = null;
-                        }
-                    } catch (Exception e) {
-                        Toast.makeText(getApplicationContext(), "Internal error",
-                                Toast.LENGTH_LONG).show();
-                        e.printStackTrace();
-                    }*/
                 break;
-
             }
             default:
         }

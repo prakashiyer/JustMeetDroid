@@ -44,12 +44,12 @@ import java.util.Map;
  */
 public class UserGroupsActivity extends Fragment implements AdapterView.OnItemClickListener {
     private static final String TAG = "User Groups Activity";
-    Activity activity;
-    GridView gridView;
-    GroupListAdapter adapter;
-    List<Map<String, Group>> groupsList;
-    String phone;
-    View rootView;
+    private Activity activity;
+    private GridView gridView;
+    private GroupListAdapter adapter;
+    private List<Map<String, Group>> groupsList;
+    private String phone;
+    private View rootView;
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {

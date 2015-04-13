@@ -121,13 +121,12 @@ public class NewUserActivity extends Activity {
             addToServer(userName, phone);
             button.setTextColor(getResources().getColor(
                     R.color.button_text));
-            goToNextPage();
         }
     }
 
     private void goToNextPage() {
         Intent intent = new Intent(this,
-                HomeActivity.class);
+                UserImageActivity.class);
         startActivity(intent);
     }
 
@@ -309,6 +308,8 @@ public class NewUserActivity extends Activity {
                     addCache(name, phone);
                     addPhoneAccount(name, phone);
                     addToPhoneDB(name, phone);
+                    pDlg.dismiss();
+                    goToNextPage();
                 } else {
                     Log.e(TAG, "User is null");
                 }

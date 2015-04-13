@@ -2,6 +2,7 @@ package com.justmeet.justmeetdroid;
 
 import android.app.ActionBar;
 import android.app.Activity;
+import android.app.Fragment;
 import android.app.FragmentTransaction;
 import android.content.Intent;
 import android.content.SharedPreferences;
@@ -9,6 +10,8 @@ import android.content.res.Resources;
 import android.graphics.drawable.Drawable;
 import android.os.Bundle;
 import android.support.v4.app.FragmentActivity;
+import android.support.v4.app.FragmentManager;
+import android.support.v4.app.FragmentStatePagerAdapter;
 import android.support.v4.view.ViewPager;
 import android.view.Menu;
 import android.view.MenuItem;
@@ -19,15 +22,15 @@ import android.widget.Toast;
  * Created by praxiyer on 01-02-2015.
  */
 public class HomeActivity extends FragmentActivity {
-    ViewPager Tab;
-    ActionBar actionBar;
-    TabPagerAdapter TabAdapter;
+    private ViewPager Tab;
+    private ActionBar actionBar;
+    private TabPagerAdapter TabAdapter;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.home);
-        TabAdapter = new TabPagerAdapter(getSupportFragmentManager());
+        TabAdapter = new TabPagerAdapter(getSupportFragmentManager(), TabPagerAdapter.HOME);
 
         Tab = (ViewPager) findViewById(R.id.pager);
 
@@ -65,19 +68,16 @@ public class HomeActivity extends FragmentActivity {
                     case 0:
                         //Fragement for HomePlans
                         actionBar.setTitle("Upcoming Plans");
-                        UserPlansActivity homePlanFragment = new UserPlansActivity();
                         break;
 
                     case 1:
                         //Fragment for Groups Tab
                         actionBar.setTitle("Groups");
-                        UserGroupsActivity grp = new UserGroupsActivity();
                         break;
 
                     case 2:
                         //Fragment for History
                         actionBar.setTitle("My Plans history");
-                        UserHistoryActivity history = new UserHistoryActivity();
                         break;
 
                 }
@@ -129,6 +129,8 @@ public class HomeActivity extends FragmentActivity {
         getMenuInflater().inflate(R.menu.menu_main, menu);
         MenuItem viewProfileItem = menu.findItem(R.id.viewProfile);
         viewProfileItem.setVisible(true);
+        MenuItem userImageItem = menu.findItem(R.id.userImage);
+        userImageItem.setVisible(true);
         MenuItem aboutItem = menu.findItem(R.id.aboutUs);
         aboutItem.setVisible(true);
         return true;
@@ -142,6 +144,10 @@ public class HomeActivity extends FragmentActivity {
                 Intent profileIntent = new Intent(this, EditMemberProfileActivity.class);
                 startActivity(profileIntent);
                 return true;
+            case (R.id.userImage):
+                Intent imageIntent = new Intent(this, UserImageActivity.class);
+                startActivity(imageIntent);
+                return true;
             case (R.id.aboutUs):
                 Intent aboutIntent = new Intent(this, AboutUsActivity.class);
                 startActivity(aboutIntent);
@@ -150,4 +156,5 @@ public class HomeActivity extends FragmentActivity {
                 return false;
         }
     }
+
 }

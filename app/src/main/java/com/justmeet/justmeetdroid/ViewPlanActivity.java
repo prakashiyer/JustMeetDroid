@@ -41,8 +41,8 @@ public class ViewPlanActivity extends Fragment {
     private String selectedPlanIndex;
     private Menu menu;
     private Plan plan;
-    Activity activity;
-    View rootView;
+    private Activity activity;
+    private View rootView;
 
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
@@ -79,11 +79,11 @@ public class ViewPlanActivity extends Fragment {
     }
 
     private void populatePlanInformation(String phone, Plan plan) {
-        TextView planLocation = (TextView) activity.findViewById(R.id.viewPlanLocation);
+        TextView planLocation = (TextView) rootView.findViewById(R.id.viewPlanLocation);
         planLocation.setText(plan.getLocation());
 
-        TextView planTimeValue = (TextView) activity.findViewById(R.id.viewPlanTime);
-        TextView planEndTimeValue = (TextView) activity.findViewById(R.id.viewPlanEndTime);
+        TextView planTimeValue = (TextView) rootView.findViewById(R.id.viewPlanTime);
+        TextView planEndTimeValue = (TextView) rootView.findViewById(R.id.viewPlanEndTime);
 
         String date = plan.getStartTime().substring(0, 10);
         String time = plan.getStartTime().substring(11, 16);
@@ -93,6 +93,7 @@ public class ViewPlanActivity extends Fragment {
         time = postedLocalDate[1];
         String hour = time.substring(0, 2);
         String min = time.substring(3, 5);
+        Log.i(TAG, "End time: "+plan.getEndTime());
         String endDate = plan.getEndTime().substring(0, 10);
         String endTime = plan.getEndTime().substring(11, 16);
         String[] endLocalDate = JMUtil
@@ -127,8 +128,8 @@ public class ViewPlanActivity extends Fragment {
                 + ":" + endMin + " " + endAmPm);
 
         List<String> membersAttending = plan.getMembersAttending();
-        Button rsvpPlanButton = (Button) activity.findViewById(R.id.rsvpPlanButton);
-        TextView rsvpLabel = (TextView) activity.findViewById(R.id.rsvpLabel);
+        Button rsvpPlanButton = (Button) rootView.findViewById(R.id.rsvpPlanButton);
+        TextView rsvpLabel = (TextView) rootView.findViewById(R.id.rsvpLabel);
         if (membersAttending != null && !membersAttending.isEmpty()
                 && membersAttending.contains(phone)) {
             rsvpPlanButton.setVisibility(Button.VISIBLE);

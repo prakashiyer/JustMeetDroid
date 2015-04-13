@@ -5,6 +5,7 @@ import android.app.Dialog;
 import android.app.TimePickerDialog;
 import android.os.Bundle;
 import android.support.v4.app.DialogFragment;
+import android.util.Log;
 import android.widget.TextView;
 import android.widget.TimePicker;
 import android.widget.Toast;
@@ -49,6 +50,7 @@ public class TimeNewPickerFragment extends DialogFragment implements
             String odate = planDateEditText.getText().toString();
 
             if (odate != null && !odate.equals("")) {
+                Log.i("Date", odate);
                 String year = odate.substring(0, 4);
                 String month = odate.substring(5, 7);
                 String dateStr = odate.substring(8, 10);

@@ -13,6 +13,7 @@ import android.content.res.Resources;
 import android.graphics.drawable.Drawable;
 import android.os.AsyncTask;
 import android.os.Bundle;
+import android.app.Fragment;
 import android.support.v4.app.FragmentActivity;
 import android.support.v4.view.ViewPager;
 import android.util.Log;
@@ -45,18 +46,18 @@ import java.util.List;
  */
 public class HomeViewPlanActivity extends FragmentActivity {
     private static final String TAG = "Home View Plan";
-    ViewPager Tab;
-    ActionBar actionBar;
-    TabPagerAdapter TabAdapter;
-    String selectedPlanIndex;
-    String selectedPlan;
-    Context context;
+    private ViewPager Tab;
+    private ActionBar actionBar;
+    private TabPagerAdapter TabAdapter;
+    private String selectedPlanIndex;
+    private String selectedPlan;
+    private Context context;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.home_view_plan);
-        TabAdapter = new TabPagerAdapter(getSupportFragmentManager());
+        TabAdapter = new TabPagerAdapter(getSupportFragmentManager(),TabPagerAdapter.VIEW_PLAN);
         context = this;
 
         SharedPreferences prefs = getSharedPreferences("Prefs",
@@ -85,6 +86,8 @@ public class HomeViewPlanActivity extends FragmentActivity {
         actionBar.setBackgroundDrawable(actionBckGrnd);
         ActionBar.TabListener tabListener = new ActionBar.TabListener() {
 
+
+
             @Override
             public void onTabReselected(ActionBar.Tab tab,
                                         FragmentTransaction ft) {
@@ -100,13 +103,11 @@ public class HomeViewPlanActivity extends FragmentActivity {
                     case 0:
                         //Fragement for View Plan
                         actionBar.setTitle("Plan Details");
-                        ViewPlanActivity viewPlanFragment = new ViewPlanActivity();
                         break;
 
                     case 1:
                         //Fragment for Members Attending
                         actionBar.setTitle("Attendees");
-                        ViewMembersAttendingActivity grp = new ViewMembersAttendingActivity();
                         break;
                 }
                 Tab.setCurrentItem(tab.getPosition());
@@ -388,4 +389,5 @@ public class HomeViewPlanActivity extends FragmentActivity {
                 return false;
         }
     }
+
 }

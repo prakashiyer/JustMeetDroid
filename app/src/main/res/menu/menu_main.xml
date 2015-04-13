@@ -3,41 +3,44 @@
 
     <item
         android:id="@+id/viewProfile"
-        app:showAsAction="never"
+        android:visible="false"
         android:title="@string/view_profile"></item>
+    <item
+        android:id="@+id/userImage"
+        android:visible="false"
+        android:title="@string/user_image"></item>
 
     <item
         android:id="@+id/editPlan"
-        app:showAsAction="never"
+        android:visible="false"
         android:title="@string/edit_plan"></item>
 
     <item
         android:id="@+id/deletePlan"
-        app:showAsAction="never"
+        android:visible="false"
         android:title="@string/delete_plan"></item>
 
     <item
         android:id="@+id/inviteMembers"
-        app:showAsAction="never"
+        android:visible="false"
         android:title="@string/add_members"></item>
 
     <item
         android:id="@+id/editGroup"
-        app:showAsAction="never"
+        android:visible="false"
         android:title="@string/edit_group"></item>
 
     <item
         android:id="@+id/leaveGroup"
-        app:showAsAction="never"
+        android:visible="false"
         android:title="@string/leave_group"></item>
 
     <item
         android:id="@+id/deleteGroup"
-        app:showAsAction="never"
+        android:visible="false"
         android:title="@string/delete_group"></item>
 
     <item
         android:id="@+id/aboutUs"
-        app:showAsAction="never"
         android:title="@string/action_about_us"></item>
 </menu>

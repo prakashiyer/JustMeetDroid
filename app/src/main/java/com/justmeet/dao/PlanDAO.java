@@ -165,17 +165,27 @@ public class PlanDAO extends JMDatabaseHandler {
         Cursor cursor = db.query(PLANS_TABLE, result_columns, where,
                 whereArgs, groupBy, having, order);
         if (cursor != null && cursor.moveToFirst()) {
-            String id = cursor.getString(2);
-            String title = cursor.getString(3);
-            String start_time = cursor.getString(4);
-            String location = cursor.getString(5);
-            String membersAttending = cursor.getString(6);
+            int idIndex = cursor.getColumnIndex(PLAN_ID);
+            int titleIndex = cursor.getColumnIndex(TITLE);
+            int startIndex = cursor.getColumnIndex(START_TIME);
+            int locationIndex = cursor.getColumnIndex(LOCATION);
+            int membersAttendingIndex = cursor.getColumnIndex(MEMBERS_ATTENDING);
+            int creatorIndex = cursor.getColumnIndex(CREATOR);
+            int endIndex = cursor.getColumnIndex(END_TIME);
+            int groupsInvitedIndex = cursor.getColumnIndex(GROUPS_INVITED);
+            int membersInvitedIndex = cursor.getColumnIndex(MEMBERS_INVITED);
+
+            String id = cursor.getString(idIndex);
+            String title = cursor.getString(titleIndex);
+            String start_time = cursor.getString(startIndex);
+            String location = cursor.getString(locationIndex);
+            String membersAttending = cursor.getString(membersAttendingIndex);
             List<String> membersAttendingList = Arrays.asList(StringUtils.split(membersAttending, ","));
-            String creator = cursor.getString(7);
-            String end_time = cursor.getString(8);
-            String groupsInvited = cursor.getString(9);
+            String creator = cursor.getString(creatorIndex);
+            String end_time = cursor.getString(endIndex);
+            String groupsInvited = cursor.getString(groupsInvitedIndex);
             List<String> groupsInvitedList = Arrays.asList(StringUtils.split(groupsInvited, ","));
-            String membersInvited = cursor.getString(10);
+            String membersInvited = cursor.getString(membersInvitedIndex);
             List<String> membersInvitedList = Arrays.asList(StringUtils.split(membersInvited, ","));
 
             return new Plan(id, title, start_time, location, membersAttendingList,
@@ -216,11 +226,11 @@ public class PlanDAO extends JMDatabaseHandler {
         String startTime = String.valueOf(calendar.get(Calendar.YEAR)) + "-"
                 + strMon + "-" + strdt + " " + strhr + ":" + strMin + ":00";
 
-        String where = MEMBERS_ATTENDING + " like %?% and " + START_TIME + " > ?";
-        String[] whereArgs = {phone, startTime};
+        String where = MEMBERS_ATTENDING + " like ? and " + START_TIME + " > ?";
+        String[] whereArgs = {"%"+phone+"%", startTime};
         String groupBy = null;
         String having = null;
-        String order = START_TIME + "ASC";
+        String order = START_TIME + " ASC";
 
         SQLiteDatabase db = this.getWritableDatabase();
         Log.w("Checking User", "Details: " + phone);
@@ -229,22 +239,34 @@ public class PlanDAO extends JMDatabaseHandler {
         List<Plan> plans = new ArrayList<Plan>();
         if (cursor != null && cursor.moveToFirst()) {
             while (!cursor.isAfterLast()) {
-                String id = cursor.getString(2);
-                String title = cursor.getString(3);
-                String start_time = cursor.getString(4);
-                String location = cursor.getString(5);
-                String membersAttending = cursor.getString(6);
+                int idIndex = cursor.getColumnIndex(PLAN_ID);
+                int titleIndex = cursor.getColumnIndex(TITLE);
+                int startIndex = cursor.getColumnIndex(START_TIME);
+                int locationIndex = cursor.getColumnIndex(LOCATION);
+                int membersAttendingIndex = cursor.getColumnIndex(MEMBERS_ATTENDING);
+                int creatorIndex = cursor.getColumnIndex(CREATOR);
+                int endIndex = cursor.getColumnIndex(END_TIME);
+                int groupsInvitedIndex = cursor.getColumnIndex(GROUPS_INVITED);
+                int membersInvitedIndex = cursor.getColumnIndex(MEMBERS_INVITED);
+                String id = cursor.getString(idIndex);
+                Log.i("Plan", "id: " + id);
+                String title = cursor.getString(titleIndex);
+                Log.i("Plan", "title: " + title);
+                String start_time = cursor.getString(startIndex);
+                String location = cursor.getString(locationIndex);
+                String membersAttending = cursor.getString(membersAttendingIndex);
                 List<String> membersAttendingList = Arrays.asList(StringUtils.split(membersAttending, ","));
-                String creator = cursor.getString(7);
-                String end_time = cursor.getString(8);
-                String groupsInvited = cursor.getString(9);
+                String creator = cursor.getString(creatorIndex);
+                String end_time = cursor.getString(endIndex);
+                String groupsInvited = cursor.getString(groupsInvitedIndex);
                 List<String> groupsInvitedList = Arrays.asList(StringUtils.split(groupsInvited, ","));
-                String membersInvited = cursor.getString(10);
+                String membersInvited = cursor.getString(membersInvitedIndex);
                 List<String> membersInvitedList = Arrays.asList(StringUtils.split(membersInvited, ","));
 
                 Plan plan = new Plan(id, title, start_time, location, membersAttendingList,
                         creator, end_time, groupsInvitedList, membersInvitedList);
                 plans.add(plan);
+                cursor.moveToNext();
             }
         }
         cursor.close();
@@ -282,11 +304,11 @@ public class PlanDAO extends JMDatabaseHandler {
         String startTime = String.valueOf(calendar.get(Calendar.YEAR)) + "-"
                 + strMon + "-" + strdt + " " + strhr + ":" + strMin + ":00";
 
-        String where = GROUPS_INVITED + " like %?% and " + START_TIME + " > ?";
-        String[] whereArgs = {groupId, startTime};
+        String where = GROUPS_INVITED + " like ? and " + START_TIME + " > ?";
+        String[] whereArgs = {"%"+groupId+"%", startTime};
         String groupBy = null;
         String having = null;
-        String order = START_TIME + "ASC";
+        String order = START_TIME + " ASC";
 
         SQLiteDatabase db = this.getWritableDatabase();
         Log.w("Checking Group", "Details: " + groupId);
@@ -295,22 +317,32 @@ public class PlanDAO extends JMDatabaseHandler {
         List<Plan> plans = new ArrayList<Plan>();
         if (cursor != null && cursor.moveToFirst()) {
             while (!cursor.isAfterLast()) {
-                String id = cursor.getString(2);
-                String title = cursor.getString(3);
-                String start_time = cursor.getString(4);
-                String location = cursor.getString(5);
-                String membersAttending = cursor.getString(6);
+                int idIndex = cursor.getColumnIndex(PLAN_ID);
+                int titleIndex = cursor.getColumnIndex(TITLE);
+                int startIndex = cursor.getColumnIndex(START_TIME);
+                int locationIndex = cursor.getColumnIndex(LOCATION);
+                int membersAttendingIndex = cursor.getColumnIndex(MEMBERS_ATTENDING);
+                int creatorIndex = cursor.getColumnIndex(CREATOR);
+                int endIndex = cursor.getColumnIndex(END_TIME);
+                int groupsInvitedIndex = cursor.getColumnIndex(GROUPS_INVITED);
+                int membersInvitedIndex = cursor.getColumnIndex(MEMBERS_INVITED);
+                String id = cursor.getString(idIndex);
+                String title = cursor.getString(titleIndex);
+                String start_time = cursor.getString(startIndex);
+                String location = cursor.getString(locationIndex);
+                String membersAttending = cursor.getString(membersAttendingIndex);
                 List<String> membersAttendingList = Arrays.asList(StringUtils.split(membersAttending, ","));
-                String creator = cursor.getString(7);
-                String end_time = cursor.getString(8);
-                String groupsInvited = cursor.getString(9);
+                String creator = cursor.getString(creatorIndex);
+                String end_time = cursor.getString(endIndex);
+                String groupsInvited = cursor.getString(groupsInvitedIndex);
                 List<String> groupsInvitedList = Arrays.asList(StringUtils.split(groupsInvited, ","));
-                String membersInvited = cursor.getString(10);
+                String membersInvited = cursor.getString(membersInvitedIndex);
                 List<String> membersInvitedList = Arrays.asList(StringUtils.split(membersInvited, ","));
 
                 Plan plan = new Plan(id, title, start_time, location, membersAttendingList,
                         creator, end_time, groupsInvitedList, membersInvitedList);
                 plans.add(plan);
+                cursor.moveToNext();
             }
         }
         cursor.close();
@@ -379,11 +411,11 @@ public class PlanDAO extends JMDatabaseHandler {
                 + ":" + strsMin
                 + ":00";
 
-        String where = MEMBERS_ATTENDING + " like %?% and " + START_TIME + " > ? and " + START_TIME + " < ?";
-        String[] whereArgs = {phone, startTime, endTime};
+        String where = MEMBERS_ATTENDING + " like ? and " + START_TIME + " > ? and " + START_TIME + " < ?";
+        String[] whereArgs = {"%"+phone+"%", startTime, endTime};
         String groupBy = null;
         String having = null;
-        String order = START_TIME + "DESC";
+        String order = START_TIME + " DESC";
 
         SQLiteDatabase db = this.getWritableDatabase();
         Log.w("Checking User", "Details: " + phone);
@@ -392,22 +424,32 @@ public class PlanDAO extends JMDatabaseHandler {
         List<Plan> plans = new ArrayList<Plan>();
         if (cursor != null && cursor.moveToFirst()) {
             while (!cursor.isAfterLast()) {
-                String id = cursor.getString(2);
-                String title = cursor.getString(3);
-                String start_time = cursor.getString(4);
-                String location = cursor.getString(5);
-                String membersAttending = cursor.getString(6);
+                int idIndex = cursor.getColumnIndex(PLAN_ID);
+                int titleIndex = cursor.getColumnIndex(TITLE);
+                int startIndex = cursor.getColumnIndex(START_TIME);
+                int locationIndex = cursor.getColumnIndex(LOCATION);
+                int membersAttendingIndex = cursor.getColumnIndex(MEMBERS_ATTENDING);
+                int creatorIndex = cursor.getColumnIndex(CREATOR);
+                int endIndex = cursor.getColumnIndex(END_TIME);
+                int groupsInvitedIndex = cursor.getColumnIndex(GROUPS_INVITED);
+                int membersInvitedIndex = cursor.getColumnIndex(MEMBERS_INVITED);
+                String id = cursor.getString(idIndex);
+                String title = cursor.getString(titleIndex);
+                String start_time = cursor.getString(startIndex);
+                String location = cursor.getString(locationIndex);
+                String membersAttending = cursor.getString(membersAttendingIndex);
                 List<String> membersAttendingList = Arrays.asList(StringUtils.split(membersAttending, ","));
-                String creator = cursor.getString(7);
-                String end_time = cursor.getString(8);
-                String groupsInvited = cursor.getString(9);
+                String creator = cursor.getString(creatorIndex);
+                String end_time = cursor.getString(endIndex);
+                String groupsInvited = cursor.getString(groupsInvitedIndex);
                 List<String> groupsInvitedList = Arrays.asList(StringUtils.split(groupsInvited, ","));
-                String membersInvited = cursor.getString(10);
+                String membersInvited = cursor.getString(membersInvitedIndex);
                 List<String> membersInvitedList = Arrays.asList(StringUtils.split(membersInvited, ","));
 
                 Plan plan = new Plan(id, title, start_time, location, membersAttendingList,
                         creator, end_time, groupsInvitedList, membersInvitedList);
                 plans.add(plan);
+                cursor.moveToNext();
             }
         }
         cursor.close();
@@ -476,11 +518,11 @@ public class PlanDAO extends JMDatabaseHandler {
                 + ":" + strsMin
                 + ":00";
 
-        String where = GROUPS_INVITED + " like %?% and " + START_TIME + " > ? and " + START_TIME + " < ?";
-        String[] whereArgs = {groupId, startTime, endTime};
+        String where = GROUPS_INVITED + " like ? and " + START_TIME + " > ? and " + START_TIME + " < ?";
+        String[] whereArgs = {"%"+groupId+"%", startTime, endTime};
         String groupBy = null;
         String having = null;
-        String order = START_TIME + "DESC";
+        String order = START_TIME + " DESC";
 
         SQLiteDatabase db = this.getWritableDatabase();
         Log.w("Checking Plans History", "Group Id: " + groupId);
@@ -489,22 +531,32 @@ public class PlanDAO extends JMDatabaseHandler {
         List<Plan> plans = new ArrayList<Plan>();
         if (cursor != null && cursor.moveToFirst()) {
             while (!cursor.isAfterLast()) {
-                String id = cursor.getString(2);
-                String title = cursor.getString(3);
-                String start_time = cursor.getString(4);
-                String location = cursor.getString(5);
-                String membersAttending = cursor.getString(6);
+                int idIndex = cursor.getColumnIndex(PLAN_ID);
+                int titleIndex = cursor.getColumnIndex(TITLE);
+                int startIndex = cursor.getColumnIndex(START_TIME);
+                int locationIndex = cursor.getColumnIndex(LOCATION);
+                int membersAttendingIndex = cursor.getColumnIndex(MEMBERS_ATTENDING);
+                int creatorIndex = cursor.getColumnIndex(CREATOR);
+                int endIndex = cursor.getColumnIndex(END_TIME);
+                int groupsInvitedIndex = cursor.getColumnIndex(GROUPS_INVITED);
+                int membersInvitedIndex = cursor.getColumnIndex(MEMBERS_INVITED);
+                String id = cursor.getString(idIndex);
+                String title = cursor.getString(titleIndex);
+                String start_time = cursor.getString(startIndex);
+                String location = cursor.getString(locationIndex);
+                String membersAttending = cursor.getString(membersAttendingIndex);
                 List<String> membersAttendingList = Arrays.asList(StringUtils.split(membersAttending, ","));
-                String creator = cursor.getString(7);
-                String end_time = cursor.getString(8);
-                String groupsInvited = cursor.getString(9);
+                String creator = cursor.getString(creatorIndex);
+                String end_time = cursor.getString(endIndex);
+                String groupsInvited = cursor.getString(groupsInvitedIndex);
                 List<String> groupsInvitedList = Arrays.asList(StringUtils.split(groupsInvited, ","));
-                String membersInvited = cursor.getString(10);
+                String membersInvited = cursor.getString(membersInvitedIndex);
                 List<String> membersInvitedList = Arrays.asList(StringUtils.split(membersInvited, ","));
 
                 Plan plan = new Plan(id, title, start_time, location, membersAttendingList,
                         creator, end_time, groupsInvitedList, membersInvitedList);
                 plans.add(plan);
+                cursor.moveToNext();
             }
         }
         cursor.close();

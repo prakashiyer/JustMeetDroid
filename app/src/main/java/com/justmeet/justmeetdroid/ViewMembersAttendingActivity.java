@@ -1,7 +1,7 @@
 package com.justmeet.justmeetdroid;
 
 import android.app.Activity;
-import android.app.Fragment;
+import android.support.v4.app.Fragment;
 import android.app.ProgressDialog;
 import android.content.Context;
 import android.content.Intent;
@@ -101,7 +101,7 @@ public class ViewMembersAttendingActivity extends Fragment implements
             adapter.setData(membersList);
             membersGridView.setAdapter(adapter);
             membersGridView.setVisibility(GridView.VISIBLE);
-            TextView label = (TextView) activity.findViewById(R.id.viewMembersAttendingListLabel);
+            TextView label = (TextView) rootView.findViewById(R.id.viewMembersAttendingListLabel);
             label.setVisibility(TextView.INVISIBLE);
             return true;
         }
@@ -110,7 +110,7 @@ public class ViewMembersAttendingActivity extends Fragment implements
 
     private void setEmptyMessage() {
         membersGridView.setVisibility(ListView.INVISIBLE);
-        TextView label = (TextView) activity.findViewById(R.id.viewMembersAttendingListLabel);
+        TextView label = (TextView) rootView.findViewById(R.id.viewMembersAttendingListLabel);
         label.setText("No members have RSVPed Yes.");
     }
 
@@ -209,7 +209,7 @@ public class ViewMembersAttendingActivity extends Fragment implements
                             adapter.setData(membersList);
                             membersGridView.setAdapter(adapter);
                             membersGridView.setVisibility(GridView.VISIBLE);
-                            TextView label = (TextView) activity.findViewById(R.id.viewMembersAttendingListLabel);
+                            TextView label = (TextView) rootView.findViewById(R.id.viewMembersAttendingListLabel);
                             label.setVisibility(TextView.INVISIBLE);
 
                         } else {

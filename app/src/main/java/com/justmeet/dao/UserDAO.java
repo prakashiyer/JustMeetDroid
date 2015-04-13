@@ -74,13 +74,16 @@ public class UserDAO extends JMDatabaseHandler {
         Cursor cursor = db.query(USER_TABLE, result_columns, where,
                 whereArgs, groupBy, having, order);
         if (cursor != null && cursor.moveToFirst()) {
-
-            int id = cursor.getInt(1);
-            String name = cursor.getString(2);
-            byte[] image = cursor.getBlob(4);
-            String groupIds = cursor.getString(5);
+            int idIndex = cursor.getColumnIndex(USER_ID);
+            int nameIndex = cursor.getColumnIndex(USER_NAME);
+            int imageIndex = cursor.getColumnIndex(USER_IMAGE);
+            int groupIdsIndex = cursor.getColumnIndex(USER_GROUPS_IDS);
+            int id = cursor.getInt(idIndex);
+            String name = cursor.getString(nameIndex);
+            byte[] image = cursor.getBlob(imageIndex);
+            String groupIds = cursor.getString(groupIdsIndex);
             List<String> groups = null;
-            if (!groupIds.equals("")) {
+            if (groupIds != null && !groupIds.equals("")) {
                 groups = Arrays.asList(groupIds.split(","));
             }
             return new User(id, name, phone, groups, image, false);
@@ -174,17 +177,23 @@ public class UserDAO extends JMDatabaseHandler {
         List<User> users = new ArrayList<User>();
         if (cursor != null && cursor.moveToFirst()) {
             while (!cursor.isAfterLast()) {
-                int id = cursor.getInt(1);
-                String name = cursor.getString(2);
-                String phone = cursor.getString(3);
-                byte[] image = cursor.getBlob(4);
-                String groupIds = cursor.getString(5);
+                int idIndex = cursor.getColumnIndex(USER_ID);
+                int nameIndex = cursor.getColumnIndex(USER_NAME);
+                int phoneIndex = cursor.getColumnIndex(USER_PHONE);
+                int imageIndex = cursor.getColumnIndex(USER_IMAGE);
+                int groupIdsIndex = cursor.getColumnIndex(USER_GROUPS_IDS);
+                int id = cursor.getInt(idIndex);
+                String name = cursor.getString(nameIndex);
+                String phone = cursor.getString(phoneIndex);
+                byte[] image = cursor.getBlob(imageIndex);
+                String groupIds = cursor.getString(groupIdsIndex);
                 List<String> groups = null;
                 if (!groupIds.equals("")) {
                     groups = Arrays.asList(groupIds.split(","));
                 }
                 User user = new User(id, name, phone, groups, image, false);
                 users.add(user);
+                cursor.moveToNext();
             }
         }
         cursor.close();

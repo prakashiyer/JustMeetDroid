@@ -41,12 +41,12 @@ import java.util.Map;
  */
 public class UserPlansActivity extends Fragment implements AdapterView.OnItemClickListener {
     private static final String TAG = "User Plans Activity";
-    Activity activity;
-    ListView planListView;
-    PlanListAdapter adapter;
-    View rootView;
-    String phone;
-    List<Map<String, Plan>> plansResult;
+    private Activity activity;
+    private ListView planListView;
+    private PlanListAdapter adapter;
+    private View rootView;
+    private String phone;
+    private List<Map<String, Plan>> plansResult;
 
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
@@ -112,7 +112,7 @@ public class UserPlansActivity extends Fragment implements AdapterView.OnItemCli
                 editor.apply();
                 break;
             }
-            Intent intent = new Intent(activity, ViewPlanActivity.class);
+            Intent intent = new Intent(activity, HomeViewPlanActivity.class);
             startActivity(intent);
         }
     }

@@ -8,9 +8,9 @@
     <string name="user_name_hint">Name</string>
     <string name="user_phone_hint">Mobile Number</string>
     <string name="enter_code_check">Verify mobile number with SMS</string>
-    <string name="user_code_hint">Enter validation code from sms</string>
-    <string name="register_button_text">Create Group</string>
-    <string name="retry_text">No network found. Please tap below image to retry.</string>
+    <string name="user_code_hint">Enter validation code from SMS</string>
+    <string name="register_button_text">Done</string>
+    <string name="retry_text">No network found. Please tap image to retry.</string>
     <string name="action_about_us">About Us</string>
     <string name="action_about_us_desc">Just Meet Description</string>
     <string name="title_0">Just Meet. Plan something today.</string>
@@ -64,5 +64,6 @@
     <string name="edit_group_button_text">Edit Group</string>
     <string name="user_search_hint"><![CDATA[Search & Invite people]]></string>
     <string name="group_search_hint"><![CDATA[Search & Invite groups]]></string>
+    <string name="user_image">Profile Image</string>
 
 </resources>

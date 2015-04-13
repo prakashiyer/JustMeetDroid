@@ -57,7 +57,7 @@ public class DateNewPickerFragment extends DialogFragment implements
                 if (day < 10) {
                     date = "0" + date;
                 }
-                planDateEditText.setText(date + "-" + year + "-" + date);
+                planDateEditText.setText(year + "-" + mon + "-" + date);
             }
 
         }
@@ -78,7 +78,7 @@ public class DateNewPickerFragment extends DialogFragment implements
                 if (day < 10) {
                     date = "0" + date;
                 }
-                planDateEditText.setText(date + "-" + year + "-" + date);
+                planDateEditText.setText(year + "-" + mon + "-" + date);
             }
 
         }

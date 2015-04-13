@@ -19,7 +19,7 @@ public class Plan {
     }
 
     public Plan(String id, String title, String startTime, String location,
-                List<String> membersAttending, String endTime, String creator,
+                List<String> membersAttending,  String creator,String endTime,
                 List<String> groupsInvited, List<String> membersInvited) {
         this.id = id;
         this.title = title;

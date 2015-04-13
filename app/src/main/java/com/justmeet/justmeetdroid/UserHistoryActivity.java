@@ -41,11 +41,11 @@ import java.util.Map;
  */
 public class UserHistoryActivity extends Fragment implements AdapterView.OnItemClickListener {
     private static final String TAG = "User History Activity";
-    Activity activity;
-    ListView planListView;
-    PlanListAdapter adapter;
-    View rootView;
-    List<Map<String, Plan>> plansResult;
+    private Activity activity;
+    private ListView planListView;
+    private PlanListAdapter adapter;
+    private View rootView;
+    private List<Map<String, Plan>> plansResult;
 
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {

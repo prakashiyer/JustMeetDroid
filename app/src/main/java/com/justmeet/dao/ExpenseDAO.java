@@ -74,11 +74,16 @@ public class ExpenseDAO extends JMDatabaseHandler {
         List<Expense> expenses = new ArrayList<Expense>();
         if (cursor != null && cursor.moveToFirst()) {
             while (!cursor.isAfterLast()) {
-                String expenseId = cursor.getString(2);
-                String title = cursor.getString(5);
-                String value = cursor.getString(6);
+                int idIndex = cursor.getColumnIndex(EXP_ID);
+                int titleIndex = cursor.getColumnIndex(EXP_TITLE);
+                int valueIndex = cursor.getColumnIndex(EXP_VALUE);
+
+                String expenseId = cursor.getString(idIndex);
+                String title = cursor.getString(titleIndex);
+                String value = cursor.getString(valueIndex);
                 Expense expense = new Expense(expenseId, phone, planId, title, value);
                 expenses.add(expense);
+                cursor.moveToNext();
             }
         }
         cursor.close();

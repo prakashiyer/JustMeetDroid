@@ -44,20 +44,20 @@ import java.util.List;
  */
 public class HomeGroupActivity extends FragmentActivity {
     private static final String TAG = "Home Group";
-    ViewPager Tab;
-    ActionBar actionBar;
-    TabPagerAdapter TabAdapter;
-    String selectedGroup;
-    String selectedGroupIndex;
-    String phone;
-    Context context;
-    String isAdmin;
+    private ViewPager Tab;
+    private ActionBar actionBar;
+    private TabPagerAdapter TabAdapter;
+    private String selectedGroup;
+    private String selectedGroupIndex;
+    private String phone;
+    private Context context;
+    private String isAdmin;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.home_group);
-        TabAdapter = new TabPagerAdapter(getSupportFragmentManager());
+        TabAdapter = new TabPagerAdapter(getSupportFragmentManager(),TabPagerAdapter.VIEW_GROUP);
 
         SharedPreferences prefs = getSharedPreferences("Prefs",
                 Activity.MODE_PRIVATE);
@@ -102,19 +102,16 @@ public class HomeGroupActivity extends FragmentActivity {
                     case 0:
                         //Fragement for HomePlans
                         actionBar.setTitle("Upcoming Plans");
-                        GroupPlansActivity homePlanFragment = new GroupPlansActivity();
                         break;
 
                     case 1:
                         //Fragment for Groups Tab
                         actionBar.setTitle("Members");
-                        GroupMembersActivity grp = new GroupMembersActivity();
                         break;
 
                     case 2:
                         //Fragment for History
                         actionBar.setTitle("History");
-                        GroupHistoryActivity history = new GroupHistoryActivity();
                         break;
 
                 }
