@@ -42,7 +42,7 @@ import java.util.Map;
 import java.util.Map.Entry;
 
 public class ViewMembersAttendingActivity extends Fragment implements
-        OnItemClickListener {
+        AdapterView.OnItemClickListener {
     private static final String TAG = "View Members Attending";
     GridView membersGridView;
     MemberGridAdapter adapter;
@@ -85,6 +85,7 @@ public class ViewMembersAttendingActivity extends Fragment implements
         PlanDAO planDAO = new PlanDAO(activity);
         Plan plan = planDAO.fetchPlan(selectedPlanIndex);
         if (plan != null) {
+            Log.i(TAG, "Got data in Local DB");
             List<String> membersAttending = plan.getMembersAttending();
             if (membersAttending != null && !membersAttending.isEmpty()) {
                 UserDAO userDAO = new UserDAO(activity);

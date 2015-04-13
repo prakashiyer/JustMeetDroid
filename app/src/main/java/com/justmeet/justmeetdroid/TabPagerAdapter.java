@@ -66,7 +66,16 @@ public class TabPagerAdapter extends FragmentStatePagerAdapter {
     @Override
     public int getCount() {
         // TODO Auto-generated method stub
-        return 3; //No of Tabs you can give your number of tabs
+        if(tag.equals(HOME)){
+            return 3;
+        } else if (tag.equals(VIEW_GROUP)) {
+            return 3;
+        } else if (tag.equals(VIEW_HISTORY)) {
+            return 4;
+        } else if (tag.equals(VIEW_PLAN)) {
+            return 2;
+        }
+        return 1;
     }
 
 
