@@ -55,7 +55,7 @@ public class GroupHistoryActivity extends Fragment implements AdapterView.OnItem
         activity = this.getActivity();
         if (activity != null && JMUtil.haveInternet(activity)) {
             rootView = inflater.inflate(R.layout.group_history, container, false);
-            TextView planHistoryLabel = (TextView) rootView.findViewById(R.id.planHistoryLabel);
+            TextView planHistoryLabel = (TextView) rootView.findViewById(R.id.groupHistoryLabel);
             planHistoryLabel.setText("Plans");
 
             SharedPreferences prefs = activity.getSharedPreferences("Prefs",

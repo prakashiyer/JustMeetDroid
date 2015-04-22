@@ -195,6 +195,7 @@ public class UserGroupsActivity extends Fragment implements AdapterView.OnItemCl
         protected void onPostExecute(String response) {
 
             if (response != null) {
+                Log.i(TAG, "RESPONSE: "+response);
                 XStream groupsXs = new XStream();
                 groupsXs.alias("GroupList", GroupList.class);
                 groupsXs.addImplicitCollection(GroupList.class, "groups");

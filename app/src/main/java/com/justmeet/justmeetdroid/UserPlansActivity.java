@@ -15,6 +15,7 @@ import android.view.ViewGroup;
 import android.widget.AdapterView;
 import android.widget.ListView;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.justmeet.dao.PlanDAO;
 import com.justmeet.entity.Plan;
@@ -29,6 +30,9 @@ import org.apache.http.HttpResponse;
 import org.apache.http.client.HttpClient;
 import org.apache.http.client.methods.HttpGet;
 import org.apache.http.impl.client.DefaultHttpClient;
+import org.apache.http.params.BasicHttpParams;
+import org.apache.http.params.HttpConnectionParams;
+import org.apache.http.params.HttpParams;
 import org.apache.http.util.EntityUtils;
 
 import java.util.ArrayList;
@@ -167,7 +171,17 @@ public class UserPlansActivity extends Fragment implements AdapterView.OnItemCli
 
             // HttpHost target = new HttpHost(TARGET_HOST);
             HttpHost target = new HttpHost(JMConstants.TARGET_HOST, 8080);
-            HttpClient client = new DefaultHttpClient();
+            HttpParams httpParameters = new BasicHttpParams();
+            // Set the timeout in milliseconds until a connection is established.
+            // The default value is zero, that means the timeout is not used.
+            int timeoutConnection = 3000;
+            HttpConnectionParams.setConnectionTimeout(httpParameters, timeoutConnection);
+            // Set the default socket timeout (SO_TIMEOUT)
+            // in milliseconds which is the timeout for waiting for data.
+            int timeoutSocket = 5000;
+            HttpConnectionParams.setSoTimeout(httpParameters, timeoutSocket);
+            HttpClient client = new DefaultHttpClient(httpParameters);
+
             HttpGet get = new HttpGet(path);
             HttpEntity results = null;
 
@@ -177,7 +191,8 @@ public class UserPlansActivity extends Fragment implements AdapterView.OnItemCli
                 String result = EntityUtils.toString(results);
                 return result;
             } catch (Exception e) {
-
+                Log.e(TAG, "Operation time out " +e);
+                Toast.makeText(mContext, "Operation timed out", Toast.LENGTH_LONG).show();
             }
             return null;
         }
@@ -185,6 +200,7 @@ public class UserPlansActivity extends Fragment implements AdapterView.OnItemCli
         @Override
         protected void onPostExecute(String response) {
             if (response != null && response.contains("PlanList")) {
+                Log.i(TAG, "Response:" +response);
                 XStream xstream = new XStream();
                 xstream.alias("PlanList", PlanList.class);
                 xstream.alias("plans", Plan.class);

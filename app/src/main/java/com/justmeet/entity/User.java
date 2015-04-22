@@ -20,6 +20,7 @@ public class User {
         this.name = name;
         this.groupIds = groupIds;
         this.image = image;
+        this.phone = phone;
         this.selected = selected;
     }
 

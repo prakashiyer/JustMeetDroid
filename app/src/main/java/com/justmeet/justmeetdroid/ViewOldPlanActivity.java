@@ -76,11 +76,11 @@ public class ViewOldPlanActivity extends Fragment {
     }
 
     private void populatePlanInformation(String phone, Plan plan) {
-        TextView planLocation = (TextView) activity.findViewById(R.id.viewPlanLocation);
+        TextView planLocation = (TextView) rootView.findViewById(R.id.viewPlanLocation);
         planLocation.setText(plan.getLocation());
 
-        TextView planTimeValue = (TextView) activity.findViewById(R.id.viewPlanTime);
-        TextView planEndTimeValue = (TextView) activity.findViewById(R.id.viewPlanEndTime);
+        TextView planTimeValue = (TextView) rootView.findViewById(R.id.viewPlanTime);
+        TextView planEndTimeValue = (TextView) rootView.findViewById(R.id.viewPlanEndTime);
 
         String date = plan.getStartTime().substring(0, 10);
         String time = plan.getStartTime().substring(11, 16);

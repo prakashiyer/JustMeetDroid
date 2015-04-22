@@ -98,8 +98,9 @@ public class CreateGroupActivity extends FragmentActivity {
         EditText groupNameField = (EditText) findViewById(R.id.groupNameValue);
         SharedPreferences prefs = getSharedPreferences("Prefs",
                 Activity.MODE_PRIVATE);
-        String members = prefs.getString("selectedIndividuals", "");
         String phone = prefs.getString("phone", "");
+        String members = prefs.getString("selectedIndividuals", "");
+        members = members +phone;
         String groupName = groupNameField.getText().toString();
         SharedPreferences.Editor editor = prefs.edit();
         editor.putString("groupName", groupName);
@@ -320,6 +321,7 @@ public class CreateGroupActivity extends FragmentActivity {
                 entity.addPart("name", new StringBody(params[1].replace(" ", "%20")));
                 entity.addPart("phone", new StringBody(params[2].replace(" ", "%20")));
                 entity.addPart("image", new FileBody(new File(filePath)));
+                Log.i(TAG, "Members: "+params[3]);
                 entity.addPart("members", new StringBody(params[3]));
 
                 post.setEntity(entity);
@@ -338,6 +340,7 @@ public class CreateGroupActivity extends FragmentActivity {
         protected void onPostExecute(String response) {
 
             if (response != null) {
+                Log.i(TAG, "RESPONSE: "+response);
                 XStream groupXs = new XStream();
                 groupXs.alias("Group", Group.class);
                 groupXs.alias("members", String.class);
@@ -349,13 +352,13 @@ public class CreateGroupActivity extends FragmentActivity {
                     SharedPreferences prefs = getSharedPreferences("Prefs",
                             Activity.MODE_PRIVATE);
                     String members = prefs.getString("selectedIndividuals", "");
-                    groupDAO.addGroup(group.getGroupId(), group.getName(),
-                            members, group.getImage(), group.getAdmin());
+                    groupDAO.addGroup(group.getId(), group.getName(),
+                            members+group.getAdmin(), group.getImage(), group.getAdmin());
                     Toast.makeText(getApplicationContext(),
                             "Congratulations! Your group has been created.",
                             Toast.LENGTH_LONG).show();
                     //TODO Remove
-                    Group dbgroup = groupDAO.fetchGroup(group.getGroupId());
+                    Group dbgroup = groupDAO.fetchGroup(group.getId());
                     if(dbgroup != null){
                         Log.i(TAG, "Group added: "+dbgroup.getName());
                     }

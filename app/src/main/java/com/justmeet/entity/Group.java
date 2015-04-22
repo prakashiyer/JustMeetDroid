@@ -4,6 +4,7 @@ import java.util.List;
 
 public class Group {
 
+    private String id;
     private String groupId;
     private String name;
     private List<String> members;
@@ -17,6 +18,7 @@ public class Group {
 
     public Group(String groupId, String name, List<String> members, String admin, byte[] image, boolean selected) {
         this.groupId = groupId;
+        this.name = name;
         this.members = members;
         this.admin = admin;
         this.image = image;
@@ -71,4 +73,11 @@ public class Group {
         this.selected = selected;
     }
 
+    public String getId() {
+        return id;
+    }
+
+    public void setId(String id) {
+        this.id = id;
+    }
 }

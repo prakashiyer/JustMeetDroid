@@ -60,7 +60,7 @@ public class AddExpenseActivity extends Fragment {
             String phone = prefs.getString("phone", "");
             String selectedPlanIndex = prefs.getString("selectedPlanIndex", "");
 
-            TextView addLabel = (TextView) activity.findViewById(R.id.addexpenseLabel);
+            TextView addLabel = (TextView) rootView.findViewById(R.id.addexpenseLabel);
             addLabel.setText(userName + "'s Expenses");
 
             String searchQuery = "/fetchExpenses?phone=" + phone + "&planIndex="
@@ -80,7 +80,7 @@ public class AddExpenseActivity extends Fragment {
      */
     public void submitExpense(View view) {
 
-        Button button = (Button) activity.findViewById(R.id.submitExpense);
+        Button button = (Button) rootView.findViewById(R.id.submitExpense);
         button.setTextColor(getResources().getColor(R.color.click_button_1));
 
         SharedPreferences prefs = activity.getSharedPreferences("Prefs",
@@ -89,8 +89,8 @@ public class AddExpenseActivity extends Fragment {
         String phone = prefs.getString("phone", "");
         String selectedPlanIndex = prefs.getString("selectedPlanIndex", "");
 
-        EditText expenseTitle1 = (EditText) activity.findViewById(R.id.addexpense1Title);
-        EditText expenseValue1 = (EditText) activity.findViewById(R.id.addexpense1Value);
+        EditText expenseTitle1 = (EditText) rootView.findViewById(R.id.addexpense1Title);
+        EditText expenseValue1 = (EditText) rootView.findViewById(R.id.addexpense1Value);
         String title1 = expenseTitle1.getText().toString();
         String val1 = expenseValue1.getText().toString();
 
@@ -100,8 +100,8 @@ public class AddExpenseActivity extends Fragment {
                     exp1);
         }
 
-        EditText expenseTitle2 = (EditText) activity.findViewById(R.id.addexpense2Title);
-        EditText expenseValue2 = (EditText) activity.findViewById(R.id.addexpense2Value);
+        EditText expenseTitle2 = (EditText) rootView.findViewById(R.id.addexpense2Title);
+        EditText expenseValue2 = (EditText) rootView.findViewById(R.id.addexpense2Value);
         String title2 = expenseTitle2.getText().toString();
         String val2 = expenseValue2.getText().toString();
 
@@ -111,8 +111,8 @@ public class AddExpenseActivity extends Fragment {
                     exp2);
         }
 
-        EditText expenseTitle3 = (EditText) activity.findViewById(R.id.addexpense3Title);
-        EditText expenseValue3 = (EditText) activity.findViewById(R.id.addexpense3Value);
+        EditText expenseTitle3 = (EditText) rootView.findViewById(R.id.addexpense3Title);
+        EditText expenseValue3 = (EditText) rootView.findViewById(R.id.addexpense3Value);
         String title3 = expenseTitle3.getText().toString();
         String val3 = expenseValue3.getText().toString();
 
@@ -122,8 +122,8 @@ public class AddExpenseActivity extends Fragment {
                     exp3);
         }
 
-        EditText expenseTitle4 = (EditText) activity.findViewById(R.id.addexpense4Title);
-        EditText expenseValue4 = (EditText) activity.findViewById(R.id.addexpense4Value);
+        EditText expenseTitle4 = (EditText) rootView.findViewById(R.id.addexpense4Title);
+        EditText expenseValue4 = (EditText) rootView.findViewById(R.id.addexpense4Value);
         String title4 = expenseTitle4.getText().toString();
         String val4 = expenseValue4.getText().toString();
 
@@ -133,8 +133,8 @@ public class AddExpenseActivity extends Fragment {
                     exp4);
         }
 
-        EditText expenseTitle5 = (EditText) activity.findViewById(R.id.addexpense5Title);
-        EditText expenseValue5 = (EditText) activity.findViewById(R.id.addexpense5Value);
+        EditText expenseTitle5 = (EditText) rootView.findViewById(R.id.addexpense5Title);
+        EditText expenseValue5 = (EditText) rootView.findViewById(R.id.addexpense5Value);
         String title5 = expenseTitle5.getText().toString();
         String val5 = expenseValue5.getText().toString();
 
@@ -229,8 +229,8 @@ public class AddExpenseActivity extends Fragment {
                         int size = expenses.size();
                         Expense expense1 = expenses.get(0);
                         if (expense1 != null) {
-                            EditText expenseTitle = (EditText) activity.findViewById(R.id.addexpense1Title);
-                            EditText expenseValue = (EditText) activity.findViewById(R.id.addexpense1Value);
+                            EditText expenseTitle = (EditText) rootView.findViewById(R.id.addexpense1Title);
+                            EditText expenseValue = (EditText) rootView.findViewById(R.id.addexpense1Value);
                             expenseTitle.setText(expense1.getTitle());
                             expenseValue.setText(String.valueOf(expense1
                                     .getValue()));
@@ -240,8 +240,8 @@ public class AddExpenseActivity extends Fragment {
                         if (size > 1) {
                             Expense expense2 = expenses.get(1);
                             if (expense2 != null) {
-                                EditText expenseTitle = (EditText) activity.findViewById(R.id.addexpense2Title);
-                                EditText expenseValue = (EditText) activity.findViewById(R.id.addexpense2Value);
+                                EditText expenseTitle = (EditText) rootView.findViewById(R.id.addexpense2Title);
+                                EditText expenseValue = (EditText) rootView.findViewById(R.id.addexpense2Value);
                                 expenseTitle.setText(expense2.getTitle());
                                 expenseValue.setText(String.valueOf(expense2
                                         .getValue()));
@@ -252,8 +252,8 @@ public class AddExpenseActivity extends Fragment {
                         if (size > 2) {
                             Expense expense3 = expenses.get(2);
                             if (expense3 != null) {
-                                EditText expenseTitle = (EditText) activity.findViewById(R.id.addexpense3Title);
-                                EditText expenseValue = (EditText) activity.findViewById(R.id.addexpense3Value);
+                                EditText expenseTitle = (EditText) rootView.findViewById(R.id.addexpense3Title);
+                                EditText expenseValue = (EditText) rootView.findViewById(R.id.addexpense3Value);
                                 expenseTitle.setText(expense3.getTitle());
                                 expenseValue.setText(String.valueOf(expense3
                                         .getValue()));
@@ -264,8 +264,8 @@ public class AddExpenseActivity extends Fragment {
                         if (size > 3) {
                             Expense expense4 = expenses.get(3);
                             if (expense4 != null) {
-                                EditText expenseTitle = (EditText) activity.findViewById(R.id.addexpense4Title);
-                                EditText expenseValue = (EditText) activity.findViewById(R.id.addexpense4Value);
+                                EditText expenseTitle = (EditText) rootView.findViewById(R.id.addexpense4Title);
+                                EditText expenseValue = (EditText) rootView.findViewById(R.id.addexpense4Value);
                                 expenseTitle.setText(expense4.getTitle());
                                 expenseValue.setText(String.valueOf(expense4
                                         .getValue()));
@@ -275,8 +275,8 @@ public class AddExpenseActivity extends Fragment {
                         if (size > 4) {
                             Expense expense5 = expenses.get(4);
                             if (expense5 != null) {
-                                EditText expenseTitle = (EditText) activity.findViewById(R.id.addexpense5Title);
-                                EditText expenseValue = (EditText) activity.findViewById(R.id.addexpense5Value);
+                                EditText expenseTitle = (EditText) rootView.findViewById(R.id.addexpense5Title);
+                                EditText expenseValue = (EditText) rootView.findViewById(R.id.addexpense5Value);
                                 expenseTitle.setText(expense5.getTitle());
                                 expenseValue.setText(String.valueOf(expense5
                                         .getValue()));

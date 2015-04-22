@@ -8,6 +8,7 @@ import android.content.Intent;
 import android.content.SharedPreferences;
 import android.os.AsyncTask;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -51,10 +52,10 @@ public class ExpenseReportActivity extends Fragment implements OnItemClickListen
                     Activity.MODE_PRIVATE);
             String selectedPlanIndex = prefs.getString("selectedPlanIndex", "");
 
-            String searchQuery = "/generateReport?planId=" + selectedPlanIndex;
+            String searchQuery = "/generateReport?planIndex=" + selectedPlanIndex;
 
             adapter = new ExpenseListAdapter(activity, activity);
-            expenseReportListView = (ListView) activity.findViewById(R.id.viewexpensereport);
+            expenseReportListView = (ListView) rootView.findViewById(R.id.viewexpensereport);
             expenseReportListView.setOnItemClickListener(this);
             ExpenseReportClient restClient = new ExpenseReportClient(activity);
             restClient.execute(new String[]{searchQuery});
@@ -133,6 +134,7 @@ public class ExpenseReportActivity extends Fragment implements OnItemClickListen
         @Override
         protected void onPostExecute(String response) {
             if (response != null) {
+                Log.i(TAG, "Response: "+response);
                 XStream xstream = new XStream();
                 xstream.alias("ExpenseReport", ExpenseReport.class);
                 xstream.alias("expenseRows", ExpenseRow.class);
