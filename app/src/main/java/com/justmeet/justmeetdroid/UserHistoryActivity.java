@@ -70,6 +70,7 @@ public class UserHistoryActivity extends Fragment implements AdapterView.OnItemC
             List<Plan> plans = planDAO.fetchPlanHistory(phone);
 
             if (plans != null && !plans.isEmpty()) {
+                Log.i(TAG, "Getting History from local DB!");
                 populatePlanDetails(plans);
             } else {
                 Log.i(TAG, "No History in local DB!");
@@ -184,10 +185,17 @@ public class UserHistoryActivity extends Fragment implements AdapterView.OnItemC
         @Override
         protected void onPostExecute(String response) {
             if (response != null && response.contains("PlanList")) {
+                Log.i(TAG, "RESPONSE: "+response);
                 XStream xstream = new XStream();
                 xstream.alias("PlanList", PlanList.class);
                 xstream.alias("plans", Plan.class);
                 xstream.addImplicitCollection(PlanList.class, "plans");
+                xstream.addImplicitCollection(Plan.class, "membersAttending",
+                        "membersAttending", String.class);
+                xstream.addImplicitCollection(Plan.class, "membersInvited",
+                        "membersInvited", String.class);
+                xstream.addImplicitCollection(Plan.class, "groupsInvited",
+                        "groupsInvited", String.class);
                 PlanList planList = (PlanList) xstream.fromXML(response);
 
                 if (planList != null && planList.getPlans() != null) {

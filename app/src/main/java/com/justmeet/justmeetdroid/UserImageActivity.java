@@ -100,11 +100,8 @@ public class UserImageActivity extends Activity {
 
     public void selectImage(View view) {
         try {
-            Intent intent = new Intent();
-            intent.setType("image/*");
-            intent.setAction(Intent.ACTION_GET_CONTENT);
-            startActivityForResult(
-                    Intent.createChooser(intent, "Select an image"), PICK_IMAGE);
+            Intent galleryIntent = new Intent(Intent.ACTION_PICK, android.provider.MediaStore.Images.Media.EXTERNAL_CONTENT_URI);
+            startActivityForResult(Intent.createChooser(galleryIntent, "Select an image"), PICK_IMAGE);
         } catch (Exception e) {
             Toast.makeText(getApplicationContext(), "Image selection failed",
                     Toast.LENGTH_LONG).show();
@@ -140,7 +137,6 @@ public class UserImageActivity extends Activity {
                     Toast.LENGTH_LONG).show();
             Log.e(TAG, e.getMessage());
         }
-        button.setTextColor(getResources().getColor(R.color.button_text));
     }
     private byte[] addToServer(String phone) {
         UserImageUploadClient restClient = new UserImageUploadClient(this);
@@ -183,9 +179,10 @@ public class UserImageActivity extends Activity {
             cropIntent.putExtra("aspectY", 300);
             cropIntent.putExtra("outputX", 300);
             cropIntent.putExtra("outputY", 300);
-            startActivityForResult(cropIntent, 2);
-            //startActivityForResult(
-            //      Intent.createChooser(cropIntent, "Select a Picture"), 2);
+
+            //startActivityForResult(cropIntent, 2);
+            startActivityForResult(
+                 Intent.createChooser(cropIntent, "Select a Picture"), 2);
         }
         catch (ActivityNotFoundException anfe)
         {

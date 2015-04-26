@@ -13,6 +13,7 @@ import android.support.v4.app.FragmentActivity;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentStatePagerAdapter;
 import android.support.v4.view.ViewPager;
+import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
@@ -22,6 +23,7 @@ import android.widget.Toast;
  * Created by praxiyer on 01-02-2015.
  */
 public class HomeActivity extends FragmentActivity {
+    private String TAG = "Home Activity";
     private ViewPager Tab;
     private ActionBar actionBar;
     private TabPagerAdapter TabAdapter;
@@ -31,21 +33,26 @@ public class HomeActivity extends FragmentActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.home);
         TabAdapter = new TabPagerAdapter(getSupportFragmentManager(), TabPagerAdapter.HOME);
+        actionBar = getActionBar();
 
         Tab = (ViewPager) findViewById(R.id.pager);
 
+
         Tab.setOnPageChangeListener(
                 new ViewPager.SimpleOnPageChangeListener() {
-                    ActionBar actionBar = getActionBar();
+                    //ActionBar actionBar = getActionBar();
 
                     @Override
                     public void onPageSelected(int position) {
+                        Log.i(TAG, " Setting Page Listener position");
                         actionBar.setSelectedNavigationItem(position);
                     }
                 });
 
+        Log.i(TAG, " Setting Tab Adapter");
         Tab.setAdapter(TabAdapter);
-        actionBar = getActionBar();
+
+
         //Enable Tabs on Action Bar
         actionBar.setNavigationMode(ActionBar.NAVIGATION_MODE_TABS);
         Resources res = getResources();
@@ -56,31 +63,14 @@ public class HomeActivity extends FragmentActivity {
             @Override
             public void onTabReselected(android.app.ActionBar.Tab tab,
                                         FragmentTransaction ft) {
-                // TODO Auto-generated method stub
-                Toast.makeText(getApplicationContext(), "Tab selected", Toast.LENGTH_LONG).show();
+                Log.i(TAG, "Reselected");
+                Tab.setCurrentItem(tab.getPosition());
 
             }
 
             @Override
             public void onTabSelected(ActionBar.Tab tab, FragmentTransaction ft) {
-
-                switch (tab.getPosition()) {
-                    case 0:
-                        //Fragement for HomePlans
-                        actionBar.setTitle("Upcoming Plans");
-                        break;
-
-                    case 1:
-                        //Fragment for Groups Tab
-                        actionBar.setTitle("Groups");
-                        break;
-
-                    case 2:
-                        //Fragment for History
-                        actionBar.setTitle("My Plans history");
-                        break;
-
-                }
+                Log.i(TAG, "Selected");
                 Tab.setCurrentItem(tab.getPosition());
             }
 
@@ -92,6 +82,7 @@ public class HomeActivity extends FragmentActivity {
             }
         };
         //Add New Tabs
+        Log.i(TAG, " Adding Tabs");
         actionBar.addTab(actionBar.newTab().setText("Plans").setTabListener(tabListener));
         actionBar.addTab(actionBar.newTab().setText("Groups").setTabListener(tabListener));
         actionBar.addTab(actionBar.newTab().setText("History").setTabListener(tabListener));
@@ -129,8 +120,6 @@ public class HomeActivity extends FragmentActivity {
         getMenuInflater().inflate(R.menu.menu_main, menu);
         MenuItem viewProfileItem = menu.findItem(R.id.viewProfile);
         viewProfileItem.setVisible(true);
-        MenuItem userImageItem = menu.findItem(R.id.userImage);
-        userImageItem.setVisible(true);
         MenuItem aboutItem = menu.findItem(R.id.aboutUs);
         aboutItem.setVisible(true);
         return true;
@@ -143,10 +132,6 @@ public class HomeActivity extends FragmentActivity {
             case (R.id.viewProfile):
                 Intent profileIntent = new Intent(this, EditMemberProfileActivity.class);
                 startActivity(profileIntent);
-                return true;
-            case (R.id.userImage):
-                Intent imageIntent = new Intent(this, UserImageActivity.class);
-                startActivity(imageIntent);
                 return true;
             case (R.id.aboutUs):
                 Intent aboutIntent = new Intent(this, AboutUsActivity.class);

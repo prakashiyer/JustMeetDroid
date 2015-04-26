@@ -53,7 +53,7 @@
     <string name="add_expense_5_text">5.</string>
     <string name="expense_button_text">Submit</string>
     <string name="group_name_label">Type a Group Name</string>
-    <string name="view_profile">View Profile</string>
+    <string name="view_profile">Manage Profile</string>
     <string name="edit_appointment_button_text">Edit</string>
     <string name="edit_plan">Edit Plan</string>
     <string name="delete_plan">Delete Plan</string>

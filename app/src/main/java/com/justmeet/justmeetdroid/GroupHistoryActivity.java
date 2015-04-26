@@ -189,6 +189,12 @@ public class GroupHistoryActivity extends Fragment implements AdapterView.OnItem
                 xstream.alias("PlanList", PlanList.class);
                 xstream.alias("plans", Plan.class);
                 xstream.addImplicitCollection(PlanList.class, "plans");
+                xstream.addImplicitCollection(Plan.class, "membersAttending",
+                        "membersAttending", String.class);
+                xstream.addImplicitCollection(Plan.class, "membersInvited",
+                        "membersInvited", String.class);
+                xstream.addImplicitCollection(Plan.class, "groupsInvited",
+                        "groupsInvited", String.class);
                 PlanList planList = (PlanList) xstream.fromXML(response);
 
                 if (planList != null && planList.getPlans() != null) {

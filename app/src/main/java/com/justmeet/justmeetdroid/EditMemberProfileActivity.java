@@ -30,6 +30,7 @@ import com.justmeet.util.JMConstants;
 import com.justmeet.util.JMUtil;
 import com.thoughtworks.xstream.XStream;
 
+
 import org.apache.http.HttpEntity;
 import org.apache.http.HttpHost;
 import org.apache.http.HttpResponse;
@@ -70,6 +71,8 @@ public class EditMemberProfileActivity extends Activity {
             Drawable actionBckGrnd = res.getDrawable(R.drawable.actionbar);
             aBar.setBackgroundDrawable(actionBckGrnd);
             aBar.setTitle(" Profile Details");
+
+            imgView = (ImageView) findViewById(R.id.editProfilePicThumbnail);
 
             String phone = prefs.getString("phone", "");
 
@@ -123,11 +126,10 @@ public class EditMemberProfileActivity extends Activity {
 
     public void editImage(View view) {
         try {
-            Intent intent = new Intent();
-            intent.setType("image/*");
-            intent.setAction(Intent.ACTION_GET_CONTENT);
-            startActivityForResult(
-                    Intent.createChooser(intent, "Select an image"), PICK_IMAGE);
+
+            Intent galleryIntent = new Intent(Intent.ACTION_PICK, android.provider.MediaStore.Images.Media.EXTERNAL_CONTENT_URI);
+            startActivityForResult(Intent.createChooser(galleryIntent, "Select an image"), PICK_IMAGE);
+
         } catch (Exception e) {
             Toast.makeText(getApplicationContext(), "Image selection failed",
                     Toast.LENGTH_LONG).show();
@@ -218,13 +220,16 @@ public class EditMemberProfileActivity extends Activity {
     {
         System.out.println("IN CROP IMAGE METHOD " + picUri);
         Intent cropIntent = new Intent("com.android.camera.action.CROP");
+        //Intent cropIntent = new Intent();
         try
         {
             //cropIntent.setType("image*//*");
             //cropIntent.setDataAndType(picUri, "image*//*");
             //cropIntent.setAction(Intent.ACTION_GET_CONTENT);
-            cropIntent.setType("image/*");
-            cropIntent.setData(picUri);
+            //cropIntent.setAction(Intent.ACTION_VIEW);
+            //cropIntent.setType("image*//*");
+            //cropIntent.setClassName("com.android.camera", "com.android.camera.action.CROP");
+            cropIntent.setDataAndNormalize(picUri);
             cropIntent.putExtra("crop", "true");
             cropIntent.putExtra("return-data", true);
             cropIntent.putExtra("aspectX", 300);
