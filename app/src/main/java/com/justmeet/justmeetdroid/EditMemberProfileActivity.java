@@ -24,6 +24,7 @@ import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.google.android.gms.drive.internal.bi;
 import com.justmeet.dao.UserDAO;
 import com.justmeet.entity.User;
 import com.justmeet.util.JMConstants;
@@ -38,7 +39,9 @@ import org.apache.http.client.HttpClient;
 import org.apache.http.client.methods.HttpGet;
 import org.apache.http.client.methods.HttpPost;
 import org.apache.http.entity.mime.MultipartEntity;
+import org.apache.http.entity.mime.content.ByteArrayBody;
 import org.apache.http.entity.mime.content.FileBody;
+import org.apache.http.entity.mime.content.InputStreamBody;
 import org.apache.http.entity.mime.content.StringBody;
 import org.apache.http.impl.client.DefaultHttpClient;
 import org.apache.http.util.EntityUtils;
@@ -57,6 +60,7 @@ public class EditMemberProfileActivity extends Activity {
     private String filePath;
     Context context;
     private Bitmap bitmap;
+    private byte[] croppedImage;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -93,22 +97,17 @@ public class EditMemberProfileActivity extends Activity {
     }
 
     public void editProfile(View view) {
-        if (bitmap == null) {
-            Toast.makeText(getApplicationContext(), "Please select image",
-                    Toast.LENGTH_SHORT).show();
-        } else {
-            SharedPreferences prefs = getSharedPreferences("Prefs",
-                    Activity.MODE_PRIVATE);
-            String phone = prefs.getString("phone", "");
-            addToServer(phone);
-
-        }
+        SharedPreferences prefs = getSharedPreferences("Prefs",
+                Activity.MODE_PRIVATE);
+        String phone = prefs.getString("phone", "");
+        addToServer(phone);
     }
 
     private byte[] addToServer(String phone) {
         EditProfileClient restClient = new EditProfileClient(this);
         EditText userNameValue = (EditText) findViewById(R.id.editName);
         String name = userNameValue.getText().toString();
+        Log.i(TAG, "Name: "+name+" : "+name.length());
         restClient.execute(new String[]{"editUser", phone, filePath, name});
         return null;
     }
@@ -174,41 +173,16 @@ public class EditMemberProfileActivity extends Activity {
                 }
                 break;
             case 2: {
-                System.out.println("RESULT CODE " + requestCode);
-                Bundle extras = data.getExtras();
-                if(extras != null){
-                    bitmap = extras.getParcelable("data");
-                    decodeFile(null);
+                if(data != null) {
+                    Bundle extras = data.getExtras();
+                    if(extras != null){
+                        bitmap = extras.getParcelable("data");
+                        decodeFile(null);
+                        break;
+                    }
                 }
-                    /*Uri croppedImageUri = data.getData();
-                    System.out.println("croppedImageUri " + croppedImageUri);
-                    try {
-                        // OI FILE Manager
-                        String fileManagerString = croppedImageUri.getPath();
-
-                        // MEDIA GALLERY
-                        String selectedImagePath = getPath(croppedImageUri);
-
-                        if (selectedImagePath != null) {
-                            filePath = selectedImagePath;
-                        } else if (fileManagerString != null) {
-                            filePath = fileManagerString;
-                        } else {
-                            Toast.makeText(getApplicationContext(), "Unknown path",
-                                    Toast.LENGTH_LONG).show();
-                            Log.e("Bitmap", "Unknown path");
-                        }
-
-                        if (croppedImageUri != null) {
-                            decodeFile(croppedImageUri);
-                        } else {
-                            bitmap = null;
-                        }
-                    } catch (Exception e) {
-                        Toast.makeText(getApplicationContext(), "Internal error",
-                                Toast.LENGTH_LONG).show();
-                        e.printStackTrace();
-                    }*/
+                Toast.makeText(getApplicationContext(), "Please select an image.",
+                        Toast.LENGTH_LONG).show();
                 break;
 
             }
@@ -276,9 +250,9 @@ public class EditMemberProfileActivity extends Activity {
         System.out.println("Data Size : Before *** " + data1.length/1024);
         ByteArrayOutputStream bos = new ByteArrayOutputStream();
         bitmap.compress(Bitmap.CompressFormat.JPEG, 30, bos);
-        byte[] data = bos.toByteArray();
+        croppedImage = bos.toByteArray();
         System.out.println("BOS Size : After *** " + bos.size()/1024);
-        System.out.println("Data Size : After *** " + data.length/1024);
+        System.out.println("Data Size : After *** " + croppedImage.length/1024);
         //ByteArrayBody bab = new ByteArrayBody(data, imageUri.getPath());
         //System.out.println("BAB Size : *** " + bab.getContentLength());
         if (bos.size()/1024 > 4096) {
@@ -289,7 +263,7 @@ public class EditMemberProfileActivity extends Activity {
             Toast.makeText(getApplicationContext(),
                     "Selected image has been set!!", Toast.LENGTH_LONG)
                     .show();
-            imgView.setImageBitmap(BitmapFactory.decodeByteArray(data,0,data.length));
+            imgView.setImageBitmap(BitmapFactory.decodeByteArray(croppedImage,0,croppedImage.length));
         }
     }
 
@@ -304,6 +278,7 @@ public class EditMemberProfileActivity extends Activity {
             Bitmap img = BitmapFactory.decodeByteArray(image, 0,
                     image.length);
             imgView.setImageBitmap(img);
+            croppedImage = image;
         }
     }
 
@@ -405,6 +380,7 @@ public class EditMemberProfileActivity extends Activity {
         protected String doInBackground(String... params) {
 
             String method = params[0];
+            String phone = params[1];
             String path = JMConstants.SERVICE_PATH + "/" + method;
 
             //HttpHost target = new HttpHost(TARGET_HOST);
@@ -415,9 +391,11 @@ public class EditMemberProfileActivity extends Activity {
             HttpEntity results = null;
             try {
                 MultipartEntity entity = new MultipartEntity();
-                entity.addPart("phone", new StringBody(params[1]));
-                entity.addPart("image", new FileBody(new File(params[2])));
-                entity.addPart("name", new StringBody(params[2]));
+                entity.addPart("phone", new StringBody(phone));
+                if(croppedImage != null){
+                    entity.addPart("image", new ByteArrayBody(croppedImage, phone+ ".jpg"));
+                }
+                entity.addPart("name", new StringBody(params[3]));
                 post.setEntity(entity);
 
                 HttpResponse response = client.execute(target, post);
@@ -431,7 +409,6 @@ public class EditMemberProfileActivity extends Activity {
 
         @Override
         protected void onPostExecute(String response) {
-            Button button = (Button) findViewById(R.id.userImageButton);
             if (response != null) {
                 Log.i(TAG, response);
                 XStream userXs = new XStream();
@@ -448,7 +425,6 @@ public class EditMemberProfileActivity extends Activity {
                         "Edit Failed.", Toast.LENGTH_LONG)
                         .show();
             }
-            button.setTextColor(getResources().getColor(R.color.button_text));
             pDlg.dismiss();
         }
     }

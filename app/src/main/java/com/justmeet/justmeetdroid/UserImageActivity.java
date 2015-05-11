@@ -36,7 +36,7 @@ import org.apache.http.client.HttpClient;
 import org.apache.http.client.methods.HttpGet;
 import org.apache.http.client.methods.HttpPost;
 import org.apache.http.entity.mime.MultipartEntity;
-import org.apache.http.entity.mime.content.FileBody;
+import org.apache.http.entity.mime.content.ByteArrayBody;
 import org.apache.http.entity.mime.content.StringBody;
 import org.apache.http.impl.client.DefaultHttpClient;
 import org.apache.http.util.EntityUtils;
@@ -53,6 +53,7 @@ public class UserImageActivity extends Activity {
     Context context;
     private ImageView imgView;
     private String filePath;
+    private byte[] croppedImage;
     //private Uri selectedImageUri;
 
     @Override
@@ -230,14 +231,16 @@ public class UserImageActivity extends Activity {
                 break;
             case 2: {
                 System.out.println("RESULT CODE " + resultCode);
-                if (resultCode == Activity.RESULT_OK) {
+                if(data != null) {
                     Bundle extras = data.getExtras();
                     if(extras != null){
                         bitmap = extras.getParcelable("data");
                         decodeFile(null);
+                        break;
                     }
                 }
-
+                Toast.makeText(getApplicationContext(), "Please select an image.",
+                        Toast.LENGTH_LONG).show();
                 break;
             }
             default:
@@ -271,9 +274,9 @@ public class UserImageActivity extends Activity {
         System.out.println("Data Size : Before *** " + data1.length/1024);
         ByteArrayOutputStream bos = new ByteArrayOutputStream();
         bitmap.compress(Bitmap.CompressFormat.JPEG, 30, bos);
-        byte[] data = bos.toByteArray();
+        croppedImage = bos.toByteArray();
         System.out.println("BOS Size : After *** " + bos.size()/1024);
-        System.out.println("Data Size : After *** " + data.length/1024);
+        System.out.println("Data Size : After *** " + croppedImage.length/1024);
         //ByteArrayBody bab = new ByteArrayBody(data, imageUri.getPath());
         //System.out.println("BAB Size : *** " + bab.getContentLength());
         if (bos.size()/1024 > 4096) {
@@ -284,7 +287,7 @@ public class UserImageActivity extends Activity {
             Toast.makeText(getApplicationContext(),
                     "Selected image has been set!!", Toast.LENGTH_LONG)
                     .show();
-            imgView.setImageBitmap(BitmapFactory.decodeByteArray(data,0,data.length));
+            imgView.setImageBitmap(BitmapFactory.decodeByteArray(croppedImage,0,croppedImage.length));
         }
 
     }
@@ -317,6 +320,7 @@ public class UserImageActivity extends Activity {
         protected byte[] doInBackground(String... params) {
 
             String method = params[0];
+            String phone = params[1];
             String path = JMConstants.SERVICE_PATH + "/" + method;
 
             //HttpHost target = new HttpHost(TARGET_HOST);
@@ -327,8 +331,8 @@ public class UserImageActivity extends Activity {
             HttpEntity results = null;
             try {
                 MultipartEntity entity = new MultipartEntity();
-                entity.addPart("phone", new StringBody(params[1]));
-                entity.addPart("image", new FileBody(new File(params[2])));
+                entity.addPart("phone", new StringBody(phone));
+                entity.addPart("image", new ByteArrayBody(croppedImage, phone+".jpg"));
                 post.setEntity(entity);
 
                 HttpResponse response = client.execute(target, post);
@@ -413,6 +417,7 @@ public class UserImageActivity extends Activity {
                         response.length);
                 if (img != null) {
                     imgView.setImageBitmap(img);
+                    croppedImage = response;
                 }
             } else {
                 imgView.setImageResource(R.drawable.ic_launcher);
