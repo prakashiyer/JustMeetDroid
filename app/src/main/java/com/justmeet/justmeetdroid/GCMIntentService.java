@@ -270,8 +270,8 @@ public class GCMIntentService extends GCMBaseIntentService {
                         List<String> groups = plan.getGroupsInvited();
                         List<String> phones = plan.getMembersInvited();
                         planDAO.addPlan(String.valueOf(plan.getId()), plan.getTitle(),
-                                startPlanTime[0] + " " + startPlanTime[1], plan.getLocation(),
-                                plan.getCreator(), plan.getCreator(), endPlanTime[0] + " " + endPlanTime[1],
+                                startTime, plan.getLocation(),
+                                plan.getCreator(), plan.getCreator(), endTime,
                                 JMUtil.listToCommaDelimitedString(groups),
                                 JMUtil.listToCommaDelimitedString(phones));
 
@@ -308,8 +308,8 @@ public class GCMIntentService extends GCMBaseIntentService {
                             endPlanTime = JMUtil.createGmtToLocalTime(endTime);
                         }
                         planDAO.editPlan(String.valueOf(plan.getId()), plan.getTitle(),
-                                startPlanTime[0] + " " + startPlanTime[1], plan.getLocation(),
-                                endPlanTime[0] + " " + endPlanTime[1]);
+                                startTime, plan.getLocation(),
+                                endTime);
 
                         //TODO Remove
                         Plan dbplan = planDAO.fetchPlan(String.valueOf(plan.getId()));

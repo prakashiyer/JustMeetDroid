@@ -32,7 +32,6 @@ public class CalendarHelper extends AsyncTask<String, String, String> {
     public String id;
     private Context mContext;
     private ContentResolver cr;
-    private ProgressDialog pDlg;
     private static final String DEBUG_TAG = "CalendarActivity";
 
     public CalendarHelper(Context mContext) {
@@ -45,19 +44,11 @@ public class CalendarHelper extends AsyncTask<String, String, String> {
         id = _id;
     }
 
-    private void showProgressDialog() {
 
-        pDlg = new ProgressDialog(mContext);
-        pDlg.setMessage("Processing ....");
-        pDlg.setProgressStyle(ProgressDialog.STYLE_SPINNER);
-        pDlg.setCancelable(false);
-        pDlg.show();
-
-    }
 
     @Override
     protected void onPreExecute() {
-        showProgressDialog();
+       // showProgressDialog();
 
     }
 
@@ -148,8 +139,8 @@ public class CalendarHelper extends AsyncTask<String, String, String> {
             cr.insert(Reminders.CONTENT_URI, reminders);
         } else if (params[5] == "create") {
             String date = params[0];
-            String endTime = params[6];
-            String endDate = params[7];
+            String endDate = params[6];
+            String endTime = params[7];
 
             calendar.set(Integer.valueOf(date.substring(0, 4)),
                     (Integer.valueOf(date.substring(5, 7)) - 1),
@@ -224,6 +215,6 @@ public class CalendarHelper extends AsyncTask<String, String, String> {
 
     @Override
     protected void onPostExecute(String response) {
-        pDlg.dismiss();
+
     }
 }
