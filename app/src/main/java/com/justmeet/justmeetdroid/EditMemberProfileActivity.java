@@ -194,15 +194,8 @@ public class EditMemberProfileActivity extends Activity {
     {
         System.out.println("IN CROP IMAGE METHOD " + picUri);
         Intent cropIntent = new Intent("com.android.camera.action.CROP");
-        //Intent cropIntent = new Intent();
         try
         {
-            //cropIntent.setType("image*//*");
-            //cropIntent.setDataAndType(picUri, "image*//*");
-            //cropIntent.setAction(Intent.ACTION_GET_CONTENT);
-            //cropIntent.setAction(Intent.ACTION_VIEW);
-            //cropIntent.setType("image*//*");
-            //cropIntent.setClassName("com.android.camera", "com.android.camera.action.CROP");
             cropIntent.setDataAndNormalize(picUri);
             cropIntent.putExtra("crop", "true");
             cropIntent.putExtra("return-data", true);
@@ -211,8 +204,6 @@ public class EditMemberProfileActivity extends Activity {
             cropIntent.putExtra("outputX", 300);
             cropIntent.putExtra("outputY", 300);
             startActivityForResult(cropIntent, 2);
-            //startActivityForResult(
-            //      Intent.createChooser(cropIntent, "Select a Picture"), 2);
         }
         catch (ActivityNotFoundException anfe)
         {

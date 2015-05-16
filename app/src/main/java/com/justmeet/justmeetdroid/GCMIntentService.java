@@ -355,10 +355,11 @@ public class GCMIntentService extends GCMBaseIntentService {
             if (response != null && gcmType.equals("NewGroup")) {
                 XStream xstream = new XStream();
                 xstream.alias("Group", Group.class);
-                Group group = (Group) xstream.fromXML(response);
                 xstream.alias("members", String.class);
                 xstream.addImplicitCollection(Group.class, "members",
                         "members", String.class);
+                Group group = (Group) xstream.fromXML(response);
+
                 if (group != null) {
                     if (!phone.equals(group.getAdmin())) {
                         GroupDAO groupDAO = new GroupDAO(mContext);

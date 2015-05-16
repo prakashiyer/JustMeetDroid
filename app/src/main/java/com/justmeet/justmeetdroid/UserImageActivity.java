@@ -169,9 +169,6 @@ public class UserImageActivity extends Activity {
         Intent cropIntent = new Intent("com.android.camera.action.CROP");
         try
         {
-            //cropIntent.setType("image*//*");
-            //cropIntent.setDataAndType(picUri, "image*//*");
-            //cropIntent.setAction(Intent.ACTION_GET_CONTENT);
             cropIntent.setType("image/*");
             cropIntent.setData(picUri);
             cropIntent.putExtra("crop", "true");
@@ -180,10 +177,7 @@ public class UserImageActivity extends Activity {
             cropIntent.putExtra("aspectY", 300);
             cropIntent.putExtra("outputX", 300);
             cropIntent.putExtra("outputY", 300);
-
-            //startActivityForResult(cropIntent, 2);
-            startActivityForResult(
-                 Intent.createChooser(cropIntent, "Select a Picture"), 2);
+            startActivityForResult(cropIntent, 2);
         }
         catch (ActivityNotFoundException anfe)
         {
