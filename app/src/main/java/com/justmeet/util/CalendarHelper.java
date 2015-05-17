@@ -106,7 +106,7 @@ public class CalendarHelper extends AsyncTask<String, String, String> {
         Calendar endCalendar = Calendar.getInstance();
 
 
-        if (params[3] == "prescription") {
+        if ("prescription".equals(params[3])) {
             String date = params[0];
             int year = Integer.valueOf(date.substring(0, 4));
             int month = Integer.valueOf(date.substring(5, 7)) - 1;
@@ -146,20 +146,21 @@ public class CalendarHelper extends AsyncTask<String, String, String> {
             reminders.put(Reminders.METHOD, Reminders.METHOD_ALERT);
             reminders.put(Reminders.MINUTES, 15);
             cr.insert(Reminders.CONTENT_URI, reminders);
-        } else if (params[5] == "create") {
+        } else if ("create".equals(params[5])) {
             String date = params[0];
-            String endTime = params[6];
-            String endDate = params[7];
+            String endTime = params[7];
+            String endDate = params[6];
 
             calendar.set(Integer.valueOf(date.substring(0, 4)),
                     (Integer.valueOf(date.substring(5, 7)) - 1),
                     Integer.valueOf(date.substring(8, 10)),
                     Integer.valueOf(date.substring(11, 13)),
                     Integer.valueOf(date.substring(14, 16)));
+
             endCalendar.set(Integer.valueOf(endDate.substring(0, 4)),
                     (Integer.valueOf(endDate.substring(5, 7)) - 1),
                     Integer.valueOf(endDate.substring(8, 10)),
-                    Integer.valueOf(endTime.substring(0, 2)),
+                    Integer.valueOf(endTime.substring(0, 2                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                )),
                     Integer.valueOf(endTime.substring(3, 5)));
             long setDate = calendar.getTimeInMillis();
             Log.i(DEBUG_TAG, "DATE: " + setDate);
@@ -190,10 +191,10 @@ public class CalendarHelper extends AsyncTask<String, String, String> {
             reminders.put(Reminders.METHOD, Reminders.METHOD_ALERT);
             reminders.put(Reminders.MINUTES, 15);
             cr.insert(Reminders.CONTENT_URI, reminders);
-        } else if (params[5] == "delete") {
+        } else if ("delete".equals(params[5])) {
             Uri CALENDAR_URI = Uri.parse("content://com.android.calendar/events");
-            int row = cr.delete(CALENDAR_URI, Events.TITLE + "=?", new String[]{params[1]});
-        } else if (params[5] == "update") {
+            cr.delete(CALENDAR_URI, Events.TITLE + "=?", new String[]{params[1]});
+        } else if ("update".equals(params[5])) {
             Uri CALENDAR_URI = Uri.parse("content://com.android.calendar/events");
             ContentValues newValues = new ContentValues();
             String newDate = params[6];
