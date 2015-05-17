@@ -361,16 +361,18 @@ public class GCMIntentService extends GCMBaseIntentService {
                 Group group = (Group) xstream.fromXML(response);
 
                 if (group != null) {
+
                     if (!phone.equals(group.getAdmin())) {
+                        Log.i(TAG, "Group addition GCM ");
                         GroupDAO groupDAO = new GroupDAO(mContext);
                         SharedPreferences prefs = getSharedPreferences("Prefs",
                                 Activity.MODE_PRIVATE);
                         String members = JMUtil.listToCommaDelimitedString(group.getMembers());
-                        groupDAO.addGroup(group.getGroupId(), group.getName(),
-                                members, group.getImage(), group.getAdmin());
+                        groupDAO.addGroup(group.getId(), group.getName(),
+                                members, group.getImage(), group.getAdmin(), phone);
 
                         //TODO Remove
-                        Group dbgroup = groupDAO.fetchGroup(group.getGroupId());
+                        Group dbgroup = groupDAO.fetchGroup(group.getId());
                         if(dbgroup != null){
                             if(dbgroup != null){
                                 Log.i(TAG, "Group added: "+dbgroup.getName());
@@ -394,10 +396,10 @@ public class GCMIntentService extends GCMBaseIntentService {
                         SharedPreferences prefs = getSharedPreferences("Prefs",
                                 Activity.MODE_PRIVATE);
                         String members = JMUtil.listToCommaDelimitedString(group.getMembers());
-                        groupDAO.updateGroupMembers(group.getGroupId(),
+                        groupDAO.updateGroupMembers(group.getId(),
                                 members);
                         //TODO Remove
-                        Group dbgroup = groupDAO.fetchGroup(group.getGroupId());
+                        Group dbgroup = groupDAO.fetchGroup(group.getId());
                         if(dbgroup != null){
                             List<String> dbMembers = dbgroup.getMembers();
                             if(dbgroup != null){

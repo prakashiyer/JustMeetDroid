@@ -183,8 +183,9 @@ public class GroupMembersActivity extends Fragment implements
                 UserList userList = (UserList) userXstream.fromXML(response);
                 if (userList != null) {
                     List<User> users = userList.getUsers();
-                    Log.i(TAG, "Got User list " + users.size());
+
                     if (users != null && !users.isEmpty()) {
+                        Log.i(TAG, "Got User list " + users.size());
                         for (User user : users) {
                             Map<String, User> memberMap = new HashMap<String, User>();
                             memberMap.put(user.getPhone(), user);

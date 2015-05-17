@@ -5,7 +5,6 @@ import java.util.List;
 public class Group {
 
     private String id;
-    private String groupId;
     private String name;
     private List<String> members;
     private String admin;
@@ -16,21 +15,13 @@ public class Group {
 
     }
 
-    public Group(String groupId, String name, List<String> members, String admin, byte[] image, boolean selected) {
-        this.groupId = groupId;
+    public Group(String id, String name, List<String> members, String admin, byte[] image, boolean selected) {
+        this.id = id;
         this.name = name;
         this.members = members;
         this.admin = admin;
         this.image = image;
         this.selected = selected;
-    }
-
-    public String getGroupId() {
-        return groupId;
-    }
-
-    public void setGroupId(String groupId) {
-        this.groupId = groupId;
     }
 
     public String getName() {

@@ -111,6 +111,7 @@ public class UserDAO extends JMDatabaseHandler {
         if (rows != 1) {
             Log.w("User Image Upload", "User Image upload has failed");
         }
+        db.close();
     }
 
     public void updateUserGroups(String phone, String groups) {
@@ -128,6 +129,7 @@ public class UserDAO extends JMDatabaseHandler {
         if (rows != 1) {
             Log.w("User Image Upload", "User Image upload has failed");
         }
+        db.close();
     }
 
     public void updateUser(String phone, byte[] image, String name) {
@@ -146,6 +148,7 @@ public class UserDAO extends JMDatabaseHandler {
         if (rows != 1) {
             Log.w("User Image Upload", "User Image upload has failed");
         }
+        db.close();
     }
 
     public List<User> fetchUsers(List<String> phoneList) {

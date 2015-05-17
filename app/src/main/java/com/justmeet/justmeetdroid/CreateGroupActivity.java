@@ -307,7 +307,7 @@ public class CreateGroupActivity extends FragmentActivity {
                             Activity.MODE_PRIVATE);
                     String members = prefs.getString("selectedIndividuals", "");
                     groupDAO.addGroup(group.getId(), group.getName(),
-                            members+group.getAdmin(), group.getImage(), group.getAdmin());
+                            members+group.getAdmin(), group.getImage(), group.getAdmin(), group.getAdmin());
                     Toast.makeText(getApplicationContext(),
                             "Congratulations! Your group has been created.",
                             Toast.LENGTH_LONG).show();
