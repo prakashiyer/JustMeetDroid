@@ -82,6 +82,7 @@ public class UserDAO extends JMDatabaseHandler {
             String name = cursor.getString(nameIndex);
             byte[] image = cursor.getBlob(imageIndex);
             String groupIds = cursor.getString(groupIdsIndex);
+            Log.w("Checking Groups", "Details: "+groupIds);
             List<String> groups = null;
             if (groupIds != null && !groupIds.equals("")) {
                 groups = Arrays.asList(groupIds.split(","));

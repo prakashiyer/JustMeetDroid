@@ -135,7 +135,10 @@ public class UserGroupsActivity extends Fragment implements AdapterView.OnItemCl
         User user = userDAO.fetchUser(phone);
         if (user != null) {
             List<String> groupIds = user.getGroupIds();
+
             if (groupIds != null && !groupIds.isEmpty()) {
+                Log.i(TAG, "User Groups size: "+groupIds.size());
+                Log.i(TAG, "User Groups: "+JMUtil.listToCommaDelimitedString(groupIds));
                 GroupDAO groupDAO = new GroupDAO(activity);
                 return groupDAO.fetchGroups(JMUtil.listToCommaDelimitedString(groupIds));
             }
