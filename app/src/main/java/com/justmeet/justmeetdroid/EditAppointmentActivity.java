@@ -234,7 +234,7 @@ public class EditAppointmentActivity extends FragmentActivity {
 
     @Override
     public void onBackPressed() {
-        Intent intent = new Intent(this, HomeActivity.class);
+        Intent intent = new Intent(this, HomeViewPlanActivity.class);
         startActivity(intent);
     }
 
@@ -353,4 +353,6 @@ public class EditAppointmentActivity extends FragmentActivity {
         }
 
     }
+
+
 }

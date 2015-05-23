@@ -2,6 +2,7 @@ package com.justmeet.justmeetdroid;
 
 import android.app.ActionBar;
 import android.app.Activity;
+import android.content.Intent;
 import android.content.res.Resources;
 import android.graphics.drawable.Drawable;
 import android.os.Bundle;
@@ -20,6 +21,12 @@ public class AboutUsActivity extends Activity {
         Drawable actionBckGrnd = res.getDrawable(R.drawable.actionbar);
         aBar.setBackgroundDrawable(actionBckGrnd);
         aBar.setTitle(" About Us");
+    }
+
+    @Override
+    public void onBackPressed() {
+        Intent intent = new Intent(this, HomeActivity.class);
+        startActivity(intent);
     }
 
 }

@@ -389,4 +389,10 @@ public class HomeViewPlanActivity extends FragmentActivity {
         }
     }
 
+    @Override
+    public void onBackPressed() {
+        Intent intent = new Intent(this, HomeActivity.class);
+        startActivity(intent);
+    }
+
 }

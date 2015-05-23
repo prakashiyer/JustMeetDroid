@@ -420,5 +420,10 @@ public class EditMemberProfileActivity extends Activity {
         }
     }
 
+    @Override
+    public void onBackPressed() {
+        Intent intent = new Intent(this, HomeActivity.class);
+        startActivity(intent);
+    }
 
 }

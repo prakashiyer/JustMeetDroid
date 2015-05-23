@@ -62,37 +62,69 @@
         <activity
             android:name="com.justmeet.justmeetdroid.UserImageActivity"
             android:label="@string/app_name"
-            android:screenOrientation="portrait"></activity>
+            android:screenOrientation="portrait"
+            android:theme="@style/AppTheme"
+            android:parentActivityName="com.justmeet.justmeetdroid.MainActivity">
+            <meta-data
+                android:name="android.support.PARENT_ACTIVITY"
+                android:value="com.justmeet.justmeetdroid.MainActivity" />
+        </activity>
 
         <!-- Home Activity -->
         <activity
             android:name="com.justmeet.justmeetdroid.HomeActivity"
             android:label="@string/app_name"
-            android:screenOrientation="portrait"></activity>
+            android:screenOrientation="portrait"
+            android:theme="@style/AppTheme">
+        </activity>
 
         <!-- Home Group Activity -->
         <activity
             android:name="com.justmeet.justmeetdroid.HomeGroupActivity"
             android:label="@string/app_name"
-            android:screenOrientation="portrait"></activity>
+            android:screenOrientation="portrait"
+            android:theme="@style/AppTheme"
+            android:parentActivityName="com.justmeet.justmeetdroid.HomeActivity">
+            <meta-data
+                android:name="android.support.PARENT_ACTIVITY"
+                android:value="com.justmeet.justmeetdroid.HomeActivity" />
+        </activity>
 
         <!-- Plan Activity -->
         <activity
             android:name="com.justmeet.justmeetdroid.HomeViewPlanActivity"
             android:label="@string/app_name"
-            android:screenOrientation="portrait"></activity>
+            android:screenOrientation="portrait"
+            android:theme="@style/AppTheme"
+            android:parentActivityName="com.justmeet.justmeetdroid.HomeActivity">
+            <meta-data
+                android:name="android.support.PARENT_ACTIVITY"
+                android:value="com.justmeet.justmeetdroid.HomeActivity" />
+        </activity>
 
         <!-- Plan History Activity -->
         <activity
             android:name="com.justmeet.justmeetdroid.HomePlanHistoryActivity"
             android:label="@string/app_name"
-            android:screenOrientation="portrait"></activity>
+            android:screenOrientation="portrait"
+            android:theme="@style/AppTheme"
+            android:parentActivityName="com.justmeet.justmeetdroid.HomeActivity">
+            <meta-data
+                android:name="android.support.PARENT_ACTIVITY"
+                android:value="com.justmeet.justmeetdroid.HomeActivity" />
+        </activity>
 
         <!-- View Existing Members Activity -->
         <activity
             android:name="com.justmeet.justmeetdroid.ViewExistingMembersActivity"
+            android:label="@string/app_name"
             android:screenOrientation="portrait"
-            android:label="@string/app_name" >
+            android:theme="@style/AppTheme"
+            android:parentActivityName="com.justmeet.justmeetdroid.HomeActivity">
+            <meta-data
+                android:name="android.support.PARENT_ACTIVITY"
+                android:value="com.justmeet.justmeetdroid.HomeActivity" />
+
             <intent-filter>
                 <action android:name="android.intent.action.SEARCH" />
             </intent-filter>
@@ -105,8 +137,14 @@
         <!-- Invite New Members Activity -->
         <activity
             android:name="com.justmeet.justmeetdroid.InviteMembersActivity"
+            android:label="@string/app_name"
             android:screenOrientation="portrait"
-            android:label="@string/app_name" >
+            android:theme="@style/AppTheme"
+            android:parentActivityName="com.justmeet.justmeetdroid.HomeGroupActivity">
+            <meta-data
+                android:name="android.support.PARENT_ACTIVITY"
+                android:value="com.justmeet.justmeetdroid.HomeGroupActivity" />
+
             <intent-filter>
                 <action android:name="android.intent.action.SEARCH" />
             </intent-filter>
@@ -120,7 +158,13 @@
         <activity
             android:name="com.justmeet.justmeetdroid.ViewExistingGroupsActivity"
             android:label="@string/app_name"
-            android:screenOrientation="portrait">
+            android:screenOrientation="portrait"
+            android:theme="@style/AppTheme"
+            android:parentActivityName="com.justmeet.justmeetdroid.HomeActivity">
+            <meta-data
+                android:name="android.support.PARENT_ACTIVITY"
+                android:value="com.justmeet.justmeetdroid.HomeActivity" />
+
             <intent-filter>
                 <action android:name="android.intent.action.SEARCH" />
             </intent-filter>
@@ -134,55 +178,109 @@
         <activity
             android:name="com.justmeet.justmeetdroid.AppointmentActivity"
             android:label="@string/app_name"
-            android:screenOrientation="portrait"></activity>
+            android:screenOrientation="portrait"
+            android:theme="@style/AppTheme"
+            android:parentActivityName="com.justmeet.justmeetdroid.HomeActivity">
+            <meta-data
+                android:name="android.support.PARENT_ACTIVITY"
+                android:value="com.justmeet.justmeetdroid.HomeActivity" />
+        </activity>
 
         <!-- Appointment Activity -->
         <activity
             android:name="com.justmeet.justmeetdroid.EditAppointmentActivity"
             android:label="@string/app_name"
-            android:screenOrientation="portrait"></activity>
+            android:screenOrientation="portrait"
+            android:theme="@style/AppTheme"
+            android:parentActivityName="com.justmeet.justmeetdroid.HomeViewPlanActivity">
+            <meta-data
+                android:name="android.support.PARENT_ACTIVITY"
+                android:value="com.justmeet.justmeetdroid.HomeViewPlanActivity" />
+        </activity>
 
         <!-- View Member Profile Activity -->
         <activity
             android:name="com.justmeet.justmeetdroid.ViewMemberProfileActivity"
             android:label="@string/app_name"
-            android:screenOrientation="portrait"></activity>
+            android:screenOrientation="portrait"
+            android:theme="@style/AppTheme"
+            android:parentActivityName="com.justmeet.justmeetdroid.HomeActivity">
+            <meta-data
+                android:name="android.support.PARENT_ACTIVITY"
+                android:value="com.justmeet.justmeetdroid.HomeActivity" />
+        </activity>
 
         <!-- View Member Profile Activity -->
         <activity
             android:name="com.justmeet.justmeetdroid.EditMemberProfileActivity"
             android:label="@string/app_name"
-            android:screenOrientation="portrait"></activity>
+            android:screenOrientation="portrait"
+            android:theme="@style/AppTheme"
+            android:parentActivityName="com.justmeet.justmeetdroid.HomeActivity">
+            <meta-data
+                android:name="android.support.PARENT_ACTIVITY"
+                android:value="com.justmeet.justmeetdroid.HomeActivity" />
+        </activity>
 
         <!-- View Expense Activity -->
         <activity
             android:name="com.justmeet.justmeetdroid.ViewExpenseActivity"
             android:label="@string/app_name"
-            android:screenOrientation="portrait"></activity>
+            android:screenOrientation="portrait"
+            android:theme="@style/AppTheme"
+            android:parentActivityName="com.justmeet.justmeetdroid.HomePlanHistoryActivity">
+            <meta-data
+                android:name="android.support.PARENT_ACTIVITY"
+                android:value="com.justmeet.justmeetdroid.HomePlanHistoryActivity" />
+        </activity>
 
         <!-- Create Group Activity -->
         <activity
             android:name="com.justmeet.justmeetdroid.CreateGroupActivity"
             android:label="@string/app_name"
-            android:screenOrientation="portrait"></activity>
+            android:screenOrientation="portrait"
+            android:theme="@style/AppTheme"
+            android:parentActivityName="com.justmeet.justmeetdroid.HomeActivity">
+            <meta-data
+                android:name="android.support.PARENT_ACTIVITY"
+                android:value="com.justmeet.justmeetdroid.HomeActivity" />
+        </activity>
 
         <!-- Edit Group Activity -->
         <activity
             android:name="com.justmeet.justmeetdroid.EditGroupActivity"
             android:label="@string/app_name"
-            android:screenOrientation="portrait"></activity>
+            android:screenOrientation="portrait"
+            android:theme="@style/AppTheme"
+            android:parentActivityName="com.justmeet.justmeetdroid.HomeGroupActivity">
+            <meta-data
+                android:name="android.support.PARENT_ACTIVITY"
+                android:value="com.justmeet.justmeetdroid.HomeGroupActivity" />
+        </activity>
 
         <!-- menu items -->
         <activity
             android:name="com.justmeet.justmeetdroid.AboutUsActivity"
+            android:label="@string/app_name"
             android:screenOrientation="portrait"
-            android:label="@string/app_name"></activity>
+            android:theme="@style/AppTheme"
+            android:parentActivityName="com.justmeet.justmeetdroid.HomeActivity">
+            <meta-data
+                android:name="android.support.PARENT_ACTIVITY"
+                android:value="com.justmeet.justmeetdroid.HomeActivity" />
+        </activity>
 
         <!-- Retry page -->
         <activity
             android:name="com.justmeet.justmeetdroid.RetryActivity"
+            android:label="@string/app_name"
             android:screenOrientation="portrait"
-            android:label="@string/app_name"></activity>
+            android:theme="@style/AppTheme"
+            android:parentActivityName="com.justmeet.justmeetdroid.HomeActivity">
+            <meta-data
+                android:name="android.support.PARENT_ACTIVITY"
+                android:value="com.justmeet.justmeetdroid.HomeActivity" />
+        </activity>
 
         <service android:name="com.justmeet.justmeetdroid.AuthenticatorService">
             <intent-filter>

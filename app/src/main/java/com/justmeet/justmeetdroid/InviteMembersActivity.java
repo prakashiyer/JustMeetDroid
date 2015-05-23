@@ -284,7 +284,7 @@ public class InviteMembersActivity extends Activity implements
 
     @Override
     public void onBackPressed() {
-        Intent intent = new Intent(this, HomeActivity.class);
+        Intent intent = new Intent(this, HomeGroupActivity.class);
         startActivity(intent);
     }
 

@@ -74,7 +74,7 @@ public class ViewExpenseActivity extends Activity {
 
     @Override
     public void onBackPressed() {
-        Intent intent = new Intent(this, ExpenseReportActivity.class);
+        Intent intent = new Intent(this, HomePlanHistoryActivity.class);
         startActivity(intent);
     }
 
