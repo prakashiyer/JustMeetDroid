@@ -6,6 +6,7 @@ import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.util.Log;
 
+import com.justmeet.entity.Group;
 import com.justmeet.entity.User;
 
 import java.util.ArrayList;
@@ -23,6 +24,7 @@ public class UserDAO extends JMDatabaseHandler {
     public static final String USER_PHONE = "phone";
     public static final String USER_IMAGE = "image";
     public static final String USER_GROUPS_IDS = "groups_ids";
+    private Context context;
 
     /**
      * Constructor.
@@ -31,6 +33,7 @@ public class UserDAO extends JMDatabaseHandler {
      */
     public UserDAO(Context context) {
         super(context);
+        this.context = context;
     }
 
     /**
@@ -41,20 +44,66 @@ public class UserDAO extends JMDatabaseHandler {
      * @return
      */
     public boolean addUser(String inName, String inPhone) {
-        SQLiteDatabase db = this.getWritableDatabase();
+        User user = fetchUser(inPhone);
+        if(user == null) {
+            SQLiteDatabase db = this.getWritableDatabase();
 
+            ContentValues values = new ContentValues();
+            values.put(USER_NAME, inName);
+            values.put(USER_PHONE, inPhone);
+
+            Log.i("Inserting New User", "Details: " + inName + ", " + inPhone);
+            // Inserting Row
+            long id = db.insert(USER_TABLE, null, values);
+            db.close(); // Closing database connection
+            if (id > -1) {
+                Log.w("Inserting New User", "New User added successfully.");
+                return true;
+            }
+        }
+        Log.w("Inserting New User", "New User addition failed.");
+        return false;
+    }
+
+    /**
+     * Add user details
+     *
+     * @param inName
+     * @param inPhone
+     * @return
+     */
+    public boolean addOtherUsers(String inName, String inPhone, byte[] image, String groups) {
+        User user = fetchUser(inPhone);
+        SQLiteDatabase db = this.getWritableDatabase();
         ContentValues values = new ContentValues();
         values.put(USER_NAME, inName);
         values.put(USER_PHONE, inPhone);
+        values.put(USER_IMAGE, image);
+        values.put(USER_GROUPS_IDS, groups);
+        if(user == null) {
+            Log.i("Inserting New User", "Details: " + inName + ", " + inPhone);
+            // Inserting Row
+            long id = db.insert(USER_TABLE, null, values);
 
-        Log.i("Inserting New User", "Details: " + inName + ", " + inPhone);
-        // Inserting Row
-        long id = db.insert(USER_TABLE, null, values);
-        db.close(); // Closing database connection
-        if (id > -1) {
-            Log.w("Inserting New User", "New User added successfully.");
+            if (id > -1) {
+                Log.w("Inserting New User", "New User added successfully.");
+                return true;
+            }
+        } else {
+            String where = USER_PHONE + "=?";
+            String[] whereArgs = {inPhone};
+            String groupBy = null;
+            String having = null;
+            String order = null;
+            Log.w("Updating Image User", "Details: " + inPhone);
+            int rows = db.update(USER_TABLE, values, where, whereArgs);
+            if (rows != 1) {
+                Log.w("User Image Upload", "User Image upload has failed");
+                return false;
+            }
             return true;
         }
+        db.close(); // Closing database connection
         Log.w("Inserting New User", "New User addition failed.");
         return false;
     }
@@ -152,30 +201,20 @@ public class UserDAO extends JMDatabaseHandler {
         db.close();
     }
 
-    public List<User> fetchUsers(List<String> phoneList) {
+    public List<User> fetchUsers(String phoneNumbers) {
         String[] result_columns = new String[]{USER_ID, USER_NAME, USER_PHONE,
                 USER_IMAGE, USER_GROUPS_IDS};
 
-        StringBuffer stringBuff = new StringBuffer();
-        int size = phoneList.size();
 
-        for (int i = 0; i < size; i++) {
-            stringBuff.append("'");
-            stringBuff.append(phoneList.get(i));
-            stringBuff.append("'");
-            if (i != size - 1) {
-                stringBuff.append(",");
-            }
-        }
 
         String where = USER_PHONE + " in (?)";
-        String[] whereArgs = {stringBuff.toString()};
+        String[] whereArgs = {phoneNumbers};
         String groupBy = null;
         String having = null;
         String order = null;
 
         SQLiteDatabase db = this.getWritableDatabase();
-        Log.w("Checking User", "Users List: " + phoneList.size());
+        Log.w("Checking User", "Users List: " + phoneNumbers);
         Cursor cursor = db.query(USER_TABLE, result_columns, where,
                 whereArgs, groupBy, having, order);
         List<User> users = new ArrayList<User>();
@@ -206,4 +245,25 @@ public class UserDAO extends JMDatabaseHandler {
         return users;
     }
 
+    public List<User> fetchInviteList(String groupId, List<String> phoneNumbers) {
+        GroupDAO groupDAO = new GroupDAO(context);
+        Group group = groupDAO.fetchGroup(groupId);
+        if(group != null){
+            List<String> members = group.getMembers();
+            if(members != null && !members.isEmpty()){
+                phoneNumbers.removeAll(members);
+                if(phoneNumbers != null && !phoneNumbers.isEmpty()){
+                    List<User> users = new ArrayList<User>();
+                    for(String phone: phoneNumbers){
+                        User user = fetchUser(phone);
+                        if(user != null){
+                            users.add(user);
+                        }
+                    }
+                    return users;
+                }
+            }
+        }
+        return null;
+    }
 }

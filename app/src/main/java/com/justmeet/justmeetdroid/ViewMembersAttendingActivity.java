@@ -66,9 +66,9 @@ public class ViewMembersAttendingActivity extends Fragment implements
             membersGridView.setOnItemClickListener(this);
             String selectedPlanIndex = prefs.getString("selectedPlanIndex", "");
 
-            boolean isDataFromDB = populateDataFromDB(selectedPlanIndex);
+           populateDataFromDB(selectedPlanIndex);
 
-            if (!isDataFromDB) {
+            if (membersList.isEmpty()) {
                 Log.i(TAG, "No members in Local DB");
                 String searchQuery = "/fetchPlanUsers?id=" + selectedPlanIndex;
                 MembersAttendingClient restClient = new MembersAttendingClient(activity);
@@ -81,7 +81,7 @@ public class ViewMembersAttendingActivity extends Fragment implements
         return rootView;
     }
 
-    private boolean populateDataFromDB(String selectedPlanIndex) {
+    private void populateDataFromDB(String selectedPlanIndex) {
         PlanDAO planDAO = new PlanDAO(activity);
         Plan plan = planDAO.fetchPlan(selectedPlanIndex);
         if (plan != null) {
@@ -104,9 +104,7 @@ public class ViewMembersAttendingActivity extends Fragment implements
             membersGridView.setVisibility(GridView.VISIBLE);
             TextView label = (TextView) rootView.findViewById(R.id.viewMembersAttendingListLabel);
             label.setVisibility(TextView.INVISIBLE);
-            return true;
         }
-        return false;
     }
 
     private void setEmptyMessage() {

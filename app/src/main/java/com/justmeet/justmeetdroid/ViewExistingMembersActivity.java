@@ -13,6 +13,7 @@ import android.graphics.drawable.Drawable;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.provider.ContactsContract.CommonDataKinds.Phone;
+import android.util.Log;
 import android.view.View;
 import android.widget.AdapterView;
 import android.widget.AdapterView.OnItemClickListener;
@@ -21,6 +22,7 @@ import android.widget.GridView;
 import android.widget.SearchView;
 import android.widget.SearchView.OnQueryTextListener;
 
+import com.justmeet.dao.UserDAO;
 import com.justmeet.entity.User;
 import com.justmeet.entity.UserList;
 import com.justmeet.util.JMConstants;
@@ -45,7 +47,7 @@ import java.util.Map.Entry;
 
 public class ViewExistingMembersActivity extends Activity implements
         OnItemClickListener {
-
+    private static final String TAG = "View Existing Members Activity";
     GridView membersGridView;
     MemberGridAdapter adapter;
     List<Map<String, User>> membersList;
@@ -82,7 +84,7 @@ public class ViewExistingMembersActivity extends Activity implements
             Cursor phones = getContentResolver().query(
                     Phone.CONTENT_URI, null,
                     null, null, null);
-            StringBuffer phoneBuffer = new StringBuffer();
+            List<String> phoneList = new ArrayList<String>();
 
             while (phones.moveToNext()) {
                 int phoneType = phones
@@ -101,24 +103,17 @@ public class ViewExistingMembersActivity extends Activity implements
                     phoneNumber = phoneNumber.substring(len - 10);
                     switch (phoneType) {
                         case Phone.TYPE_MOBILE:
-                            phoneBuffer.append(phoneNumber);
-                            System.out.println("Phone: " + phoneNumber);
-                            phoneBuffer.append(",");
+                            phoneList.add(phoneNumber);
                             break;
                         case Phone.TYPE_HOME:
-                            phoneBuffer.append(phoneNumber);
+                            phoneList.add(phoneNumber);
                             System.out.println("Phone: " + phoneNumber);
-                            phoneBuffer.append(",");
                             break;
                         case Phone.TYPE_WORK:
-                            phoneBuffer.append(phoneNumber);
-                            System.out.println("Phone: " + phoneNumber);
-                            phoneBuffer.append(",");
+                            phoneList.add(phoneNumber);
                             break;
                         case Phone.TYPE_OTHER:
-                            phoneBuffer.append(phoneNumber);
-                            System.out.println("Phone: " + phoneNumber);
-                            phoneBuffer.append(",");
+                            phoneList.add(phoneNumber);
                             break;
                         default:
                             break;
@@ -128,13 +123,20 @@ public class ViewExistingMembersActivity extends Activity implements
             }
             phones.close();
 
-            phoneBuffer.deleteCharAt(phoneBuffer.lastIndexOf(","));
-
-            String searchQuery = "/fetchExistingUsers?phoneList="
-                    + phoneBuffer.toString();
-
-            ExistingMembersClient restClient = new ExistingMembersClient(this);
-            restClient.execute(new String[]{searchQuery});
+            if(!phoneList.isEmpty()){
+                String phoneNumbers = JMUtil.listToCommaDelimitedString(phoneList);
+                UserDAO userDAO = new UserDAO(context);
+                List<User> users = userDAO.fetchUsers(phoneNumbers);
+                if (users != null && !users.isEmpty()) {
+                    populateUserList(users);
+                } else {
+                    Log.i(TAG, "No Members in local DB!");
+                    String searchQuery = "/fetchExistingUsers?phoneList="
+                            + phoneNumbers;
+                    ExistingMembersClient restClient = new ExistingMembersClient(this);
+                    restClient.execute(new String[]{searchQuery});
+                }
+            }
         } else {
             Intent intent = new Intent(this, RetryActivity.class);
             startActivity(intent);
@@ -349,25 +351,28 @@ public class ViewExistingMembersActivity extends Activity implements
                 if (userList != null) {
                     List<User> users = userList.getUsers();
                     if (users != null && !users.isEmpty()) {
-                        for (User user : users) {
-                            Map<String, User> memberMap = new HashMap<String, User>();
-                            memberMap.put(user.getPhone(), user);
-                            membersList.add(memberMap);
-                        }
-
-                        if (!membersList.isEmpty()) {
-                            filteredList = new ArrayList<Map<String, User>>();
-                            filteredList.addAll(membersList);
-                            adapter.setData(filteredList);
-                            membersGridView.setAdapter(adapter);
-                            membersGridView.setVisibility(GridView.VISIBLE);
-                        }
+                        populateUserList(users);
                     }
                 }
             }
             pDlg.dismiss();
         }
 
+    }
+
+    private void populateUserList(List<User> users) {
+        for (User user : users) {
+            Map<String, User> memberMap = new HashMap<String, User>();
+            memberMap.put(user.getPhone(), user);
+            membersList.add(memberMap);
+        }
+        if (!membersList.isEmpty()) {
+            filteredList = new ArrayList<Map<String, User>>();
+            filteredList.addAll(membersList);
+            adapter.setData(filteredList);
+            membersGridView.setAdapter(adapter);
+            membersGridView.setVisibility(GridView.VISIBLE);
+        }
     }
 
 

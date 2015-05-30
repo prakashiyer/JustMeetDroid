@@ -16,6 +16,7 @@ import android.util.Log;
 import android.widget.ImageView;
 import android.widget.TextView;
 
+import com.justmeet.dao.UserDAO;
 import com.justmeet.entity.User;
 import com.justmeet.util.JMConstants;
 import com.justmeet.util.JMUtil;
@@ -52,10 +53,16 @@ public class ViewMemberProfileActivity extends Activity {
 
             String phone = prefs.getString("memberPhone", "");
 
-            String userQuery = "/fetchUser?phone=" + phone;
-            MemberProfileClient userRestClient = new MemberProfileClient(this);
-            userRestClient.execute(new String[]{userQuery});
-
+            UserDAO userDAO = new UserDAO(this);
+            User user = userDAO.fetchUser(phone);
+            if (user != null && user.getName() != null) {
+                populateUserDetails(user);
+            } else {
+                Log.i(TAG, "No user found in local DB!");
+                String userQuery = "/fetchUser?phone=" + phone;
+                MemberProfileClient userRestClient = new MemberProfileClient(this);
+                userRestClient.execute(new String[]{userQuery});
+            }
         } else {
             Intent intent = new Intent(this, RetryActivity.class);
             startActivity(intent);
@@ -123,23 +130,27 @@ public class ViewMemberProfileActivity extends Activity {
                 userXs.addImplicitCollection(User.class, "groupIds", "groupIds",
                         String.class);
                 User user = (User) userXs.fromXML(response);
-                if (user != null && user.getName() != null) {
-                    TextView phoneValue = (TextView) findViewById(R.id.viewProfilePhone);
-                    phoneValue.setText("    Phone: " + user.getPhone());
-                    TextView userNameValue = (TextView) findViewById(R.id.viewProfileName);
-                    userNameValue.setText("   Name: " + user.getName());
-                    ImageView imgView = (ImageView) findViewById(R.id.viewProfilePicThumbnail);
-                    byte[] image = user.getImage();
-                    if (image != null) {
-                        Bitmap img = BitmapFactory.decodeByteArray(image, 0,
-                                image.length);
-                        imgView.setImageBitmap(img);
-                    }
+                if (user != null) {
+                    populateUserDetails(user);
                 }
             }
             pDlg.dismiss();
         }
 
+    }
+
+    private void populateUserDetails(User user) {
+        TextView phoneValue = (TextView) findViewById(R.id.viewProfilePhone);
+        phoneValue.setText("    Phone: " + user.getPhone());
+        TextView userNameValue = (TextView) findViewById(R.id.viewProfileName);
+        userNameValue.setText("   Name: " + user.getName());
+        ImageView imgView = (ImageView) findViewById(R.id.viewProfilePicThumbnail);
+        byte[] image = user.getImage();
+        if (image != null) {
+            Bitmap img = BitmapFactory.decodeByteArray(image, 0,
+                    image.length);
+            imgView.setImageBitmap(img);
+        }
     }
 
 }
