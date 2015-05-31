@@ -13,6 +13,7 @@ import android.widget.TextView;
 
 import com.justmeet.entity.User;
 
+import java.lang.ref.WeakReference;
 import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
@@ -89,10 +90,18 @@ public class MemberGridAdapter extends BaseAdapter {
 
             byte[] image = user.getImage();
             if (image != null) {
-                Bitmap img = BitmapFactory.decodeByteArray(image, 0,
-                        image.length);
+                BitmapFactory.Options options = new BitmapFactory.Options();
+                options.inScaled = false;
+                options.inPurgeable = true;
+                options.inInputShareable = true;
+                options.inPreferredConfig = Bitmap.Config.RGB_565;
+                WeakReference<Bitmap> imageBitmapReference = new WeakReference<Bitmap>(BitmapFactory.decodeByteArray(image, 0,
+                        image.length, options));
 
-                imgView.setImageBitmap(img);
+                /*Bitmap img = BitmapFactory.decodeByteArray(image, 0,
+                        image.length);*/
+
+                imgView.setImageBitmap(imageBitmapReference.get());
             } else {
                 imgView.setImageDrawable(activity.getResources()
                         .getDrawable(R.drawable.ic_launcher));

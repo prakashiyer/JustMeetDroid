@@ -13,6 +13,7 @@ import android.widget.TextView;
 
 import com.justmeet.entity.ExpenseRow;
 
+import java.lang.ref.WeakReference;
 import java.util.List;
 
 
@@ -92,8 +93,15 @@ public class ExpenseListAdapter extends BaseAdapter {
 
         byte[] image = expenseRow.getUserImage();
         if (image != null) {
-            Bitmap img = BitmapFactory.decodeByteArray(image, 0, image.length);
-            imgView.setImageBitmap(img);
+            BitmapFactory.Options options = new BitmapFactory.Options();
+            options.inScaled = false;
+            options.inPurgeable = true;
+            options.inInputShareable = true;
+            options.inPreferredConfig = Bitmap.Config.RGB_565;
+            WeakReference<Bitmap> imageBitmapReference = new WeakReference<Bitmap>(BitmapFactory.decodeByteArray(image, 0,
+                    image.length, options));
+            /*Bitmap img = BitmapFactory.decodeByteArray(image, 0, image.length);*/
+            imgView.setImageBitmap(imageBitmapReference.get());
         } else {
             imgView.setImageDrawable(context.getResources().getDrawable(
                     R.drawable.ic_launcher));
