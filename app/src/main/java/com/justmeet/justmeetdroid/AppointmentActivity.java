@@ -250,8 +250,8 @@ public class AppointmentActivity extends FragmentActivity {
                     String groupList = prefs.getString("selectedGroups", "");
                     String phoneList = prefs.getString("selectedIndividuals", "");
                     planDAO.addPlan(String.valueOf(plan.getId()), plan.getTitle(),
-                            startPlanTime[0] + " " + startPlanTime[1], plan.getLocation(),
-                            plan.getCreator(), plan.getCreator(), endPlanTime[0] + " " + endPlanTime[1],
+                            startTime, plan.getLocation(),
+                            plan.getCreator(), plan.getCreator(), endTime,
                             groupList, phoneList);
 
                     SharedPreferences.Editor editor = prefs.edit();

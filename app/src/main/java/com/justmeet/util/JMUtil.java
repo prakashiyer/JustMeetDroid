@@ -54,9 +54,9 @@ public class JMUtil {
         int size2 = list.size();
 
         for (int i = 0; i < size2; i++) {
-            stringBuff2.append("'");
+            //stringBuff2.append("'");
             stringBuff2.append(list.get(i));
-            stringBuff2.append("'");
+            //stringBuff2.append("'");
             if (i != size2 - 1) {
                 stringBuff2.append(",");
             }

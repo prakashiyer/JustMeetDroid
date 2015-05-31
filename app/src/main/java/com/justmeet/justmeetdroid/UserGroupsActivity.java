@@ -95,7 +95,7 @@ public class UserGroupsActivity extends Fragment implements AdapterView.OnItemCl
                 selectedGroupPhone = entry.getValue().getAdmin();
                 editor.putString("selectedGroupPhone", selectedGroupPhone);
                 editor.putString("selectedGroupName", entry.getValue().getName());
-                editor.putString("selectedGroupId", entry.getValue().getGroupId());
+                editor.putString("selectedGroupId", entry.getValue().getId());
                 String creator = entry.getValue().getAdmin();
                 if (phone.equals(creator)) {
                     editor.putString("groupAdmin", "true");
@@ -121,7 +121,7 @@ public class UserGroupsActivity extends Fragment implements AdapterView.OnItemCl
         groupsList = new ArrayList<Map<String, Group>>();
         for (Group group : groups) {
             Map<String, Group> groupDetails = new HashMap<String, Group>();
-            groupDetails.put(group.getGroupId(), group);
+            groupDetails.put(group.getId(), group);
             groupsList.add(groupDetails);
         }
         if (!groupsList.isEmpty()) {
@@ -135,7 +135,10 @@ public class UserGroupsActivity extends Fragment implements AdapterView.OnItemCl
         User user = userDAO.fetchUser(phone);
         if (user != null) {
             List<String> groupIds = user.getGroupIds();
+
             if (groupIds != null && !groupIds.isEmpty()) {
+                Log.i(TAG, "User Groups size: "+groupIds.size());
+                Log.i(TAG, "User Groups: "+JMUtil.listToCommaDelimitedString(groupIds));
                 GroupDAO groupDAO = new GroupDAO(activity);
                 return groupDAO.fetchGroups(JMUtil.listToCommaDelimitedString(groupIds));
             }

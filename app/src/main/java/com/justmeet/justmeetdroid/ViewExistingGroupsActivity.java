@@ -153,7 +153,7 @@ public class ViewExistingGroupsActivity extends Activity implements
                 if (groups != null && !groups.isEmpty()) {
                     for (Group group : groups) {
                         Map<String, Group> groupMap = new HashMap<String, Group>();
-                        groupMap.put(group.getGroupId(), group);
+                        groupMap.put(group.getId(), group);
                         groupsList.add(groupMap);
                     }
                     if (!groupsList.isEmpty()) {
@@ -191,7 +191,7 @@ public class ViewExistingGroupsActivity extends Activity implements
                 Group group = entry.getValue();
                 if (group.isSelected()) {
                     group.setSelected(false);
-                    selectedGroups = selectedGroups.replace(group.getGroupId() + ",", "");
+                    selectedGroups = selectedGroups.replace(group.getId() + ",", "");
                     editor.putString("selectedGroups", selectedGroups);
                     editor.apply();
                     adapter.setData(filteredList);
@@ -200,7 +200,7 @@ public class ViewExistingGroupsActivity extends Activity implements
                     groupsGridView.setVisibility(GridView.VISIBLE);
                 } else {
                     group.setSelected(true);
-                    selectedGroups = selectedGroups + group.getGroupId() + ",";
+                    selectedGroups = selectedGroups + group.getId() + ",";
                     editor.putString("selectedGroups", selectedGroups);
                     System.out.println("selected Groups: " + selectedGroups);
                     editor.apply();
@@ -312,7 +312,7 @@ public class ViewExistingGroupsActivity extends Activity implements
                     if (groups != null && !groups.isEmpty()) {
                         for (Group group : groups) {
                             Map<String, Group> groupMap = new HashMap<String, Group>();
-                            groupMap.put(String.valueOf(group.getGroupId()), group);
+                            groupMap.put(String.valueOf(group.getId()), group);
                             groupsList.add(groupMap);
 
                         }

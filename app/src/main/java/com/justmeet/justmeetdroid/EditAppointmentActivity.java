@@ -234,7 +234,7 @@ public class EditAppointmentActivity extends FragmentActivity {
 
     @Override
     public void onBackPressed() {
-        Intent intent = new Intent(this, HomeActivity.class);
+        Intent intent = new Intent(this, HomeViewPlanActivity.class);
         startActivity(intent);
     }
 
@@ -331,8 +331,8 @@ public class EditAppointmentActivity extends FragmentActivity {
                     SharedPreferences prefs = getSharedPreferences("Prefs",
                             Activity.MODE_PRIVATE);
                     planDAO.editPlan(String.valueOf(plan.getId()), plan.getTitle(),
-                            startPlanTime[0] + " " + startPlanTime[1], plan.getLocation(),
-                            endPlanTime[0] + " " + endPlanTime[1]);
+                            startTime, plan.getLocation(),
+                            endTime);
                     SharedPreferences.Editor editor = prefs.edit();
                     editor.putString("selectedPlanIndex", String.valueOf(plan.getId()));
                     editor.apply();
@@ -353,4 +353,6 @@ public class EditAppointmentActivity extends FragmentActivity {
         }
 
     }
+
+
 }

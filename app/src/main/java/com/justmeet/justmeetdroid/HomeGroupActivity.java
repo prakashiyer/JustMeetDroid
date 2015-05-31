@@ -252,11 +252,14 @@ public class HomeGroupActivity extends FragmentActivity {
                                 UserDAO userDAO = new UserDAO(context);
                                 for (String phone : members) {
                                     User user = userDAO.fetchUser(phone);
-                                    List<String> groupIds = user.getGroupIds();
-                                    groupIds.remove(selectedGroupIndex);
-
-                                    userDAO.updateUserGroups(phone,
-                                            JMUtil.listToCommaDelimitedString(groupIds));
+                                    if(user != null){
+                                        List<String> groupIds = user.getGroupIds();
+                                        if(groupIds != null && !groupIds.isEmpty()) {
+                                            groupIds.remove(selectedGroupIndex);
+                                            userDAO.updateUserGroups(phone,
+                                                    JMUtil.listToCommaDelimitedString(groupIds));
+                                        }
+                                    }
                                 }
                             }
                             PlanDAO planDAO = new PlanDAO(context);
@@ -366,5 +369,11 @@ public class HomeGroupActivity extends FragmentActivity {
             pDlg.dismiss();
         }
 
+    }
+
+    @Override
+    public void onBackPressed() {
+        Intent intent = new Intent(this, HomeActivity.class);
+        startActivity(intent);
     }
 }

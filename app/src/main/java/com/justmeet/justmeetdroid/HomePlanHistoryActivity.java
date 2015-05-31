@@ -2,6 +2,7 @@ package com.justmeet.justmeetdroid;
 
 import android.app.ActionBar;
 import android.app.FragmentTransaction;
+import android.content.Intent;
 import android.content.res.Resources;
 import android.graphics.drawable.Drawable;
 import android.os.Bundle;
@@ -93,5 +94,11 @@ public class HomePlanHistoryActivity extends FragmentActivity {
         actionBar.addTab(actionBar.newTab().setText("Report").setTabListener(tabListener));
         actionBar.addTab(actionBar.newTab().setText("Add Expense").setTabListener(tabListener));
 
+    }
+
+    @Override
+    public void onBackPressed() {
+        Intent intent = new Intent(this, HomeActivity.class);
+        startActivity(intent);
     }
 }

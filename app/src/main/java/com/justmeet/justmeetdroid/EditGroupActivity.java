@@ -287,13 +287,13 @@ public class EditGroupActivity extends FragmentActivity {
                 Group group = (Group) groupXs.fromXML(response);
                 if (group != null) {
                     GroupDAO groupDAO = new GroupDAO(mContext);
-                    groupDAO.editGroup(group.getGroupId(), group.getName(),
+                    groupDAO.editGroup(group.getId(), group.getName(),
                             group.getImage());
                     Toast.makeText(getApplicationContext(),
                             "Your group has been edited.",
                             Toast.LENGTH_LONG).show();
                     //TODO Remove
-                    Group dbGroup = groupDAO.fetchGroup(group.getGroupId());
+                    Group dbGroup = groupDAO.fetchGroup(group.getId());
                     if(dbGroup != null){
                         Log.i(TAG, "Group updated: "+dbGroup.getName());
                     }
@@ -330,7 +330,7 @@ public class EditGroupActivity extends FragmentActivity {
 
     @Override
     public void onBackPressed() {
-        Intent intent = new Intent(this, MainActivity.class);
+        Intent intent = new Intent(this, HomeGroupActivity.class);
         startActivity(intent);
     }
 

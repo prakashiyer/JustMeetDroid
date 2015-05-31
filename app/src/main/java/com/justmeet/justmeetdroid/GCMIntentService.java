@@ -270,8 +270,8 @@ public class GCMIntentService extends GCMBaseIntentService {
                         List<String> groups = plan.getGroupsInvited();
                         List<String> phones = plan.getMembersInvited();
                         planDAO.addPlan(String.valueOf(plan.getId()), plan.getTitle(),
-                                startPlanTime[0] + " " + startPlanTime[1], plan.getLocation(),
-                                plan.getCreator(), plan.getCreator(), endPlanTime[0] + " " + endPlanTime[1],
+                                startTime, plan.getLocation(),
+                                plan.getCreator(), plan.getCreator(), endTime,
                                 JMUtil.listToCommaDelimitedString(groups),
                                 JMUtil.listToCommaDelimitedString(phones));
 
@@ -308,8 +308,8 @@ public class GCMIntentService extends GCMBaseIntentService {
                             endPlanTime = JMUtil.createGmtToLocalTime(endTime);
                         }
                         planDAO.editPlan(String.valueOf(plan.getId()), plan.getTitle(),
-                                startPlanTime[0] + " " + startPlanTime[1], plan.getLocation(),
-                                endPlanTime[0] + " " + endPlanTime[1]);
+                                startTime, plan.getLocation(),
+                                endTime);
 
                         //TODO Remove
                         Plan dbplan = planDAO.fetchPlan(String.valueOf(plan.getId()));
@@ -355,21 +355,24 @@ public class GCMIntentService extends GCMBaseIntentService {
             if (response != null && gcmType.equals("NewGroup")) {
                 XStream xstream = new XStream();
                 xstream.alias("Group", Group.class);
-                Group group = (Group) xstream.fromXML(response);
                 xstream.alias("members", String.class);
                 xstream.addImplicitCollection(Group.class, "members",
                         "members", String.class);
+                Group group = (Group) xstream.fromXML(response);
+
                 if (group != null) {
+
                     if (!phone.equals(group.getAdmin())) {
+                        Log.i(TAG, "Group addition GCM ");
                         GroupDAO groupDAO = new GroupDAO(mContext);
                         SharedPreferences prefs = getSharedPreferences("Prefs",
                                 Activity.MODE_PRIVATE);
                         String members = JMUtil.listToCommaDelimitedString(group.getMembers());
-                        groupDAO.addGroup(group.getGroupId(), group.getName(),
-                                members, group.getImage(), group.getAdmin());
+                        groupDAO.addGroup(group.getId(), group.getName(),
+                                members, group.getImage(), group.getAdmin(), phone);
 
                         //TODO Remove
-                        Group dbgroup = groupDAO.fetchGroup(group.getGroupId());
+                        Group dbgroup = groupDAO.fetchGroup(group.getId());
                         if(dbgroup != null){
                             if(dbgroup != null){
                                 Log.i(TAG, "Group added: "+dbgroup.getName());
@@ -393,10 +396,10 @@ public class GCMIntentService extends GCMBaseIntentService {
                         SharedPreferences prefs = getSharedPreferences("Prefs",
                                 Activity.MODE_PRIVATE);
                         String members = JMUtil.listToCommaDelimitedString(group.getMembers());
-                        groupDAO.updateGroupMembers(group.getGroupId(),
+                        groupDAO.updateGroupMembers(group.getId(),
                                 members);
                         //TODO Remove
-                        Group dbgroup = groupDAO.fetchGroup(group.getGroupId());
+                        Group dbgroup = groupDAO.fetchGroup(group.getId());
                         if(dbgroup != null){
                             List<String> dbMembers = dbgroup.getMembers();
                             if(dbgroup != null){

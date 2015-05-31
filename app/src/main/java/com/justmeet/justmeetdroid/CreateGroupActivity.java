@@ -38,6 +38,7 @@ import org.apache.http.HttpResponse;
 import org.apache.http.client.HttpClient;
 import org.apache.http.client.methods.HttpPost;
 import org.apache.http.entity.mime.MultipartEntity;
+import org.apache.http.entity.mime.content.ByteArrayBody;
 import org.apache.http.entity.mime.content.FileBody;
 import org.apache.http.entity.mime.content.StringBody;
 import org.apache.http.impl.client.DefaultHttpClient;
@@ -57,6 +58,7 @@ public class CreateGroupActivity extends FragmentActivity {
     private ImageView imgView;
     private static final int PICK_IMAGE = 1;
     private static final String TAG = "New Group";
+    private byte[] croppedImage;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -80,11 +82,8 @@ public class CreateGroupActivity extends FragmentActivity {
 
     public void selectGroupImage(View view) {
         try {
-            Intent intent = new Intent();
-            intent.setType("image/*");
-            intent.setAction(Intent.ACTION_GET_CONTENT);
-            startActivityForResult(
-                    Intent.createChooser(intent, "Select Picture"), PICK_IMAGE);
+            Intent galleryIntent = new Intent(Intent.ACTION_PICK, android.provider.MediaStore.Images.Media.EXTERNAL_CONTENT_URI);
+            startActivityForResult(Intent.createChooser(galleryIntent, "Select an image"), PICK_IMAGE);
         } catch (Exception e) {
             Toast.makeText(getApplicationContext(), "Image selection failed",
                     Toast.LENGTH_LONG).show();
@@ -149,41 +148,16 @@ public class CreateGroupActivity extends FragmentActivity {
                 }
                 break;
             case 2: {
-                System.out.println("RESULT CODE " + requestCode);
-                Bundle extras = data.getExtras();
-                if(extras != null){
-                    bitmap = extras.getParcelable("data");
-                    decodeFile(null);
+                if(data != null) {
+                    Bundle extras = data.getExtras();
+                    if(extras != null){
+                        bitmap = extras.getParcelable("data");
+                        decodeFile(null);
+                        break;
+                    }
                 }
-                    /*Uri croppedImageUri = data.getData();
-                    System.out.println("croppedImageUri " + croppedImageUri);
-                    try {
-                        // OI FILE Manager
-                        String fileManagerString = croppedImageUri.getPath();
-
-                        // MEDIA GALLERY
-                        String selectedImagePath = getPath(croppedImageUri);
-
-                        if (selectedImagePath != null) {
-                            filePath = selectedImagePath;
-                        } else if (fileManagerString != null) {
-                            filePath = fileManagerString;
-                        } else {
-                            Toast.makeText(getApplicationContext(), "Unknown path",
-                                    Toast.LENGTH_LONG).show();
-                            Log.e("Bitmap", "Unknown path");
-                        }
-
-                        if (croppedImageUri != null) {
-                            decodeFile(croppedImageUri);
-                        } else {
-                            bitmap = null;
-                        }
-                    } catch (Exception e) {
-                        Toast.makeText(getApplicationContext(), "Internal error",
-                                Toast.LENGTH_LONG).show();
-                        e.printStackTrace();
-                    }*/
+                Toast.makeText(getApplicationContext(), "Please select an image.",
+                        Toast.LENGTH_LONG).show();
                 break;
 
             }
@@ -197,9 +171,6 @@ public class CreateGroupActivity extends FragmentActivity {
         Intent cropIntent = new Intent("com.android.camera.action.CROP");
         try
         {
-            //cropIntent.setType("image*//*");
-            //cropIntent.setDataAndType(picUri, "image*//*");
-            //cropIntent.setAction(Intent.ACTION_GET_CONTENT);
             cropIntent.setType("image/*");
             cropIntent.setData(picUri);
             cropIntent.putExtra("crop", "true");
@@ -209,8 +180,6 @@ public class CreateGroupActivity extends FragmentActivity {
             cropIntent.putExtra("outputX", 300);
             cropIntent.putExtra("outputY", 300);
             startActivityForResult(cropIntent, 2);
-            //startActivityForResult(
-            //      Intent.createChooser(cropIntent, "Select a Picture"), 2);
         }
         catch (ActivityNotFoundException anfe)
         {
@@ -232,9 +201,9 @@ public class CreateGroupActivity extends FragmentActivity {
         System.out.println("Data Size : Before *** " + data1.length/1024);
         ByteArrayOutputStream bos = new ByteArrayOutputStream();
         bitmap.compress(Bitmap.CompressFormat.JPEG, 30, bos);
-        byte[] data = bos.toByteArray();
+        croppedImage = bos.toByteArray();
         System.out.println("BOS Size : After *** " + bos.size()/1024);
-        System.out.println("Data Size : After *** " + data.length/1024);
+        System.out.println("Data Size : After *** " + croppedImage.length/1024);
         //ByteArrayBody bab = new ByteArrayBody(data, imageUri.getPath());
         //System.out.println("BAB Size : *** " + bab.getContentLength());
         if (bos.size()/1024 > 4096) {
@@ -245,23 +214,8 @@ public class CreateGroupActivity extends FragmentActivity {
             Toast.makeText(getApplicationContext(),
                     "Selected image has been set!!", Toast.LENGTH_LONG)
                     .show();
-            imgView.setImageBitmap(BitmapFactory.decodeByteArray(data,0,data.length));
+            imgView.setImageBitmap(BitmapFactory.decodeByteArray(croppedImage,0,croppedImage.length));
         }
-    }
-
-    /**
-     * Stores the registration ID and app versionCode in the application's
-     * {@code SharedPreferences}.
-     *
-     * @param context application's context.
-     * @param regId   registration ID
-     */
-    private void storeRegistrationId(Context context, String regId) {
-        SharedPreferences prefs = getSharedPreferences("Prefs",
-                Activity.MODE_PRIVATE);
-        SharedPreferences.Editor editor = prefs.edit();
-        editor.putString("regId", regId);
-        editor.apply();
     }
 
     @SuppressWarnings("deprecation")
@@ -320,7 +274,7 @@ public class CreateGroupActivity extends FragmentActivity {
                 MultipartEntity entity = new MultipartEntity();
                 entity.addPart("name", new StringBody(params[1].replace(" ", "%20")));
                 entity.addPart("phone", new StringBody(params[2].replace(" ", "%20")));
-                entity.addPart("image", new FileBody(new File(filePath)));
+                entity.addPart("image", new ByteArrayBody(croppedImage, params[1]+ ".jpg"));
                 Log.i(TAG, "Members: "+params[3]);
                 entity.addPart("members", new StringBody(params[3]));
 
@@ -353,7 +307,7 @@ public class CreateGroupActivity extends FragmentActivity {
                             Activity.MODE_PRIVATE);
                     String members = prefs.getString("selectedIndividuals", "");
                     groupDAO.addGroup(group.getId(), group.getName(),
-                            members+group.getAdmin(), group.getImage(), group.getAdmin());
+                            members+group.getAdmin(), group.getImage(), group.getAdmin(), group.getAdmin());
                     Toast.makeText(getApplicationContext(),
                             "Congratulations! Your group has been created.",
                             Toast.LENGTH_LONG).show();
@@ -366,7 +320,15 @@ public class CreateGroupActivity extends FragmentActivity {
                             HomeGroupActivity.class);
                     startActivity(intent);
 
+                } else {
+                    Toast.makeText(getApplicationContext(),
+                            "Edit Failed.", Toast.LENGTH_LONG)
+                            .show();
                 }
+            } else {
+                Toast.makeText(getApplicationContext(),
+                        "Edit Failed.", Toast.LENGTH_LONG)
+                        .show();
             }
             pDlg.dismiss();
         }

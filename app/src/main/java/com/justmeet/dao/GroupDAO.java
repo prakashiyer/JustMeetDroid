@@ -7,6 +7,8 @@ import android.database.sqlite.SQLiteDatabase;
 import android.util.Log;
 
 import com.justmeet.entity.Group;
+import com.justmeet.entity.User;
+import com.justmeet.util.JMUtil;
 
 import org.apache.commons.lang.StringUtils;
 
@@ -26,6 +28,7 @@ public class GroupDAO extends JMDatabaseHandler {
     public static final String MEMBERS = "members";
     public static final String IMAGE = "image";
     public static final String ADMIN = "admin";
+    private Context context;
 
     /**
      * Constructor.
@@ -34,9 +37,11 @@ public class GroupDAO extends JMDatabaseHandler {
      */
     public GroupDAO(Context context) {
         super(context);
+        this.context = context;
+
     }
 
-    public boolean addGroup(String groupId, String name, String members, byte[] image, String admin) {
+    public boolean addGroup(String groupId, String name, String members, byte[] image, String admin, String phone) {
         SQLiteDatabase db = this.getWritableDatabase();
 
         ContentValues values = new ContentValues();
@@ -52,6 +57,18 @@ public class GroupDAO extends JMDatabaseHandler {
         db.close(); // Closing database connection
         if (id > -1) {
             Log.w("Inserting New Group", "New Group added successfully.");
+            UserDAO userDAO = new UserDAO(context);
+            User user = userDAO.fetchUser(phone);
+            if(user != null) {
+                List<String> groupIds = new ArrayList<String>();
+                List<String> groupIdFromUser = user.getGroupIds();
+                if(groupIdFromUser != null && !groupIdFromUser.isEmpty()){
+                    groupIds.addAll(groupIdFromUser);
+                }
+                groupIds.add(groupId);
+                userDAO.updateUserGroups(phone, JMUtil.listToCommaDelimitedString(groupIds));
+                Log.w("Updating user with New Group", "New Group added successfully.");
+            }
             return true;
         }
         Log.w("Inserting New Group", "New Group addition failed.");
@@ -99,7 +116,7 @@ public class GroupDAO extends JMDatabaseHandler {
         String order = null;
 
         SQLiteDatabase db = this.getWritableDatabase();
-        Log.w("Fetching Groups: ", "Size: " + groupIds);
+        Log.w("Fetching Groups ", "Size: " + groupIds);
         Cursor cursor = db.query(GROUPS_TABLE, result_columns, where,
                 whereArgs, groupBy, having, order);
         List<Group> groups = new ArrayList<Group>();
@@ -111,6 +128,7 @@ public class GroupDAO extends JMDatabaseHandler {
                 int imageIndex = cursor.getColumnIndex(IMAGE);
                 int adminIndex = cursor.getColumnIndex(ADMIN);
                 String groupId = cursor.getString(idIndex);
+                Log.w("Fetching Group ", "id: " + groupId);
                 String name = cursor.getString(nameIndex);
                 String members = cursor.getString(membersIndex);
                 List<String> membersList = Arrays.asList(StringUtils.split(members, ","));

@@ -32,7 +32,6 @@ public class CalendarHelper extends AsyncTask<String, String, String> {
     public String id;
     private Context mContext;
     private ContentResolver cr;
-    private ProgressDialog pDlg;
     private static final String DEBUG_TAG = "CalendarActivity";
 
     public CalendarHelper(Context mContext) {
@@ -45,19 +44,11 @@ public class CalendarHelper extends AsyncTask<String, String, String> {
         id = _id;
     }
 
-    private void showProgressDialog() {
 
-        pDlg = new ProgressDialog(mContext);
-        pDlg.setMessage("Processing ....");
-        pDlg.setProgressStyle(ProgressDialog.STYLE_SPINNER);
-        pDlg.setCancelable(false);
-        pDlg.show();
-
-    }
 
     @Override
     protected void onPreExecute() {
-        showProgressDialog();
+       // showProgressDialog();
 
     }
 
@@ -106,7 +97,7 @@ public class CalendarHelper extends AsyncTask<String, String, String> {
         Calendar endCalendar = Calendar.getInstance();
 
 
-        if ("prescription".equals(params[3])) {
+        if (params[3] == "prescription") {
             String date = params[0];
             int year = Integer.valueOf(date.substring(0, 4));
             int month = Integer.valueOf(date.substring(5, 7)) - 1;
@@ -146,21 +137,20 @@ public class CalendarHelper extends AsyncTask<String, String, String> {
             reminders.put(Reminders.METHOD, Reminders.METHOD_ALERT);
             reminders.put(Reminders.MINUTES, 15);
             cr.insert(Reminders.CONTENT_URI, reminders);
-        } else if ("create".equals(params[5])) {
+        } else if (params[5] == "create") {
             String date = params[0];
-            String endTime = params[7];
             String endDate = params[6];
+            String endTime = params[7];
 
             calendar.set(Integer.valueOf(date.substring(0, 4)),
                     (Integer.valueOf(date.substring(5, 7)) - 1),
                     Integer.valueOf(date.substring(8, 10)),
                     Integer.valueOf(date.substring(11, 13)),
                     Integer.valueOf(date.substring(14, 16)));
-
             endCalendar.set(Integer.valueOf(endDate.substring(0, 4)),
                     (Integer.valueOf(endDate.substring(5, 7)) - 1),
                     Integer.valueOf(endDate.substring(8, 10)),
-                    Integer.valueOf(endTime.substring(0, 2                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                )),
+                    Integer.valueOf(endTime.substring(0, 2)),
                     Integer.valueOf(endTime.substring(3, 5)));
             long setDate = calendar.getTimeInMillis();
             Log.i(DEBUG_TAG, "DATE: " + setDate);
@@ -191,10 +181,10 @@ public class CalendarHelper extends AsyncTask<String, String, String> {
             reminders.put(Reminders.METHOD, Reminders.METHOD_ALERT);
             reminders.put(Reminders.MINUTES, 15);
             cr.insert(Reminders.CONTENT_URI, reminders);
-        } else if ("delete".equals(params[5])) {
+        } else if (params[5] == "delete") {
             Uri CALENDAR_URI = Uri.parse("content://com.android.calendar/events");
-            cr.delete(CALENDAR_URI, Events.TITLE + "=?", new String[]{params[1]});
-        } else if ("update".equals(params[5])) {
+            int row = cr.delete(CALENDAR_URI, Events.TITLE + "=?", new String[]{params[1]});
+        } else if (params[5] == "update") {
             Uri CALENDAR_URI = Uri.parse("content://com.android.calendar/events");
             ContentValues newValues = new ContentValues();
             String newDate = params[6];
@@ -225,6 +215,6 @@ public class CalendarHelper extends AsyncTask<String, String, String> {
 
     @Override
     protected void onPostExecute(String response) {
-        pDlg.dismiss();
+
     }
 }

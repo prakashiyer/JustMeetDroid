@@ -5,8 +5,10 @@ import android.app.ProgressDialog;
 import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
+import android.database.Cursor;
 import android.os.AsyncTask;
 import android.os.Bundle;
+import android.provider.ContactsContract;
 import android.support.v4.app.Fragment;
 import android.util.Log;
 import android.view.LayoutInflater;
@@ -18,12 +20,16 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.justmeet.dao.PlanDAO;
+import com.justmeet.dao.UserDAO;
 import com.justmeet.entity.Plan;
 import com.justmeet.entity.PlanList;
+import com.justmeet.entity.User;
+import com.justmeet.entity.UserList;
 import com.justmeet.util.JMConstants;
 import com.justmeet.util.JMUtil;
 import com.thoughtworks.xstream.XStream;
 
+import org.apache.commons.lang.StringUtils;
 import org.apache.http.HttpEntity;
 import org.apache.http.HttpHost;
 import org.apache.http.HttpResponse;
@@ -71,6 +77,55 @@ public class UserPlansActivity extends Fragment implements AdapterView.OnItemCli
                     .findViewById(R.id.viewupcomingplansList);
             planListView.setOnItemClickListener(this);
 
+            Cursor phones = activity.getContentResolver().query(
+                    ContactsContract.CommonDataKinds.Phone.CONTENT_URI, null,
+                    null, null, null);
+            List<String> phoneList = new ArrayList<String>();
+
+            while (phones.moveToNext()) {
+                int phoneType = phones
+                        .getInt(phones
+                                .getColumnIndex(ContactsContract.CommonDataKinds.Phone.TYPE));
+
+                String phoneNumber = phones
+                        .getString(
+                                phones.getColumnIndex(ContactsContract.CommonDataKinds.Phone.NUMBER))
+                        .trim();
+                String[] source = new String[]{"(", ")", "+", "-", ".", " "};
+                String[] replace = new String[]{"", "", "", "", "", ""};
+                phoneNumber = StringUtils.replaceEach(phoneNumber, source, replace);
+                int len = phoneNumber.length();
+                if (len >= 10 && StringUtils.isNumeric(phoneNumber)) {
+                    phoneNumber = phoneNumber.substring(len - 10);
+                    switch (phoneType) {
+                        case ContactsContract.CommonDataKinds.Phone.TYPE_MOBILE:
+                            phoneList.add(phoneNumber);
+                            break;
+                        case ContactsContract.CommonDataKinds.Phone.TYPE_HOME:
+                            phoneList.add(phoneNumber);
+                            break;
+                        case ContactsContract.CommonDataKinds.Phone.TYPE_WORK:
+                            phoneList.add(phoneNumber);
+                            break;
+                        case ContactsContract.CommonDataKinds.Phone.TYPE_OTHER:
+                            phoneList.add(phoneNumber);
+                            break;
+                        default:
+                            break;
+                    }
+                }
+
+            }
+            phones.close();
+
+            if(!phoneList.isEmpty()) {
+                String phoneNumbers = JMUtil.listToCommaDelimitedString(phoneList);
+                String searchQuery = "/fetchExistingUsers?phoneList="
+                        + phoneNumbers;
+                ExistingMembersClient restClient = new ExistingMembersClient(activity);
+                restClient.execute(new String[]{searchQuery});
+            }
+
             PlanDAO planDAO = new PlanDAO(activity);
             List<Plan> plans = planDAO.fetchUpcomingPlans(phone);
 
@@ -82,6 +137,10 @@ public class UserPlansActivity extends Fragment implements AdapterView.OnItemCli
                 PlansClient restClient = new PlansClient(activity);
                 restClient.execute(new String[]{searchQuery});
             }
+
+
+
+
             return rootView;
         } else {
             Intent intent = new Intent(activity, RetryActivity.class);
@@ -224,6 +283,75 @@ public class UserPlansActivity extends Fragment implements AdapterView.OnItemCli
             }
             pDlg.dismiss();
         }
+    }
+
+    private class ExistingMembersClient extends AsyncTask<String, Integer, String> {
+
+        private Context mContext;
+
+        public ExistingMembersClient(Context mContext) {
+            this.mContext = mContext;
+        }
+
+        @Override
+        protected void onPreExecute() {
+
+
+        }
+
+        @Override
+        protected String doInBackground(String... params) {
+
+            String path = JMConstants.SERVICE_PATH + params[0];
+
+            // HttpHost target = new HttpHost(TARGET_HOST);
+            HttpHost target = new HttpHost(JMConstants.TARGET_HOST, 8080);
+            HttpClient client = new DefaultHttpClient();
+            HttpGet get = new HttpGet(path);
+            HttpEntity results = null;
+
+            try {
+                HttpResponse response = client.execute(target, get);
+                results = response.getEntity();
+                String result = EntityUtils.toString(results);
+                return result;
+            } catch (Exception e) {
+
+            }
+            return null;
+        }
+
+        @Override
+        protected void onPostExecute(String response) {
+
+
+            if (response != null) {
+                XStream userXstream = new XStream();
+                userXstream.alias("UserList", UserList.class);
+                userXstream.addImplicitCollection(UserList.class, "users");
+                userXstream.alias("users", User.class);
+                userXstream.alias("groupIds", String.class);
+                userXstream.addImplicitCollection(User.class, "groupIds",
+                        "groupIds", String.class);
+                UserList userList = (UserList) userXstream.fromXML(response);
+                if (userList != null) {
+                    List<User> users = userList.getUsers();
+                    if (users != null && !users.isEmpty()) {
+                        UserDAO userDAO = new UserDAO(activity);
+                        for(User user: users){
+                            String groupIdStr = null;
+                            List<String> groupIds = user.getGroupIds();
+                            if(groupIds != null && !groupIds.isEmpty()){
+                                groupIdStr = JMUtil.listToCommaDelimitedString(groupIds);
+                            }
+                            userDAO.addOtherUsers(user.getName(), user.getPhone(),
+                                    user.getImage(), groupIdStr);
+                        }
+                    }
+                }
+            }
+        }
+
     }
 
     private void setEmptyMessage() {

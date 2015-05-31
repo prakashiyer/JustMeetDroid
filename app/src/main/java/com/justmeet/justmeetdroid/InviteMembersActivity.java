@@ -13,6 +13,7 @@ import android.graphics.drawable.Drawable;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.provider.ContactsContract.CommonDataKinds.Phone;
+import android.util.Log;
 import android.view.View;
 import android.widget.AdapterView;
 import android.widget.AdapterView.OnItemClickListener;
@@ -22,6 +23,7 @@ import android.widget.SearchView;
 import android.widget.SearchView.OnQueryTextListener;
 
 import com.justmeet.dao.GroupDAO;
+import com.justmeet.dao.UserDAO;
 import com.justmeet.entity.Group;
 import com.justmeet.entity.User;
 import com.justmeet.entity.UserList;
@@ -47,7 +49,7 @@ import java.util.Map.Entry;
 
 public class InviteMembersActivity extends Activity implements
         OnItemClickListener {
-
+    private static final String TAG = "Invite Members Activity";
     GridView membersGridView;
     MemberGridAdapter adapter;
     List<Map<String, User>> membersList;
@@ -87,7 +89,7 @@ public class InviteMembersActivity extends Activity implements
             Cursor phones = getContentResolver().query(
                     Phone.CONTENT_URI, null,
                     null, null, null);
-            StringBuffer phoneBuffer = new StringBuffer();
+            List<String> phoneList = new ArrayList<String>();
 
             while (phones.moveToNext()) {
                 int phoneType = phones
@@ -106,24 +108,17 @@ public class InviteMembersActivity extends Activity implements
                     phoneNumber = phoneNumber.substring(len - 10);
                     switch (phoneType) {
                         case Phone.TYPE_MOBILE:
-                            phoneBuffer.append(phoneNumber);
-                            System.out.println("Phone: " + phoneNumber);
-                            phoneBuffer.append(",");
+                            phoneList.add(phoneNumber);
                             break;
                         case Phone.TYPE_HOME:
-                            phoneBuffer.append(phoneNumber);
+                            phoneList.add(phoneNumber);
                             System.out.println("Phone: " + phoneNumber);
-                            phoneBuffer.append(",");
                             break;
                         case Phone.TYPE_WORK:
-                            phoneBuffer.append(phoneNumber);
-                            System.out.println("Phone: " + phoneNumber);
-                            phoneBuffer.append(",");
+                            phoneList.add(phoneNumber);
                             break;
                         case Phone.TYPE_OTHER:
-                            phoneBuffer.append(phoneNumber);
-                            System.out.println("Phone: " + phoneNumber);
-                            phoneBuffer.append(",");
+                            phoneList.add(phoneNumber);
                             break;
                         default:
                             break;
@@ -133,13 +128,22 @@ public class InviteMembersActivity extends Activity implements
             }
             phones.close();
 
-            phoneBuffer.deleteCharAt(phoneBuffer.lastIndexOf(","));
+            if(!phoneList.isEmpty()){
+                String phoneNumbers = JMUtil.listToCommaDelimitedString(phoneList);
+                UserDAO userDAO = new UserDAO(context);
+                List<User> users = userDAO.fetchInviteList(selectedGroupIndex, phoneList);
+                if (users != null && !users.isEmpty()) {
+                    populateUsers(users);
+                } else {
+                    Log.i(TAG, "No Members in local DB!");
+                    String searchQuery = "/fetchInviteList?groupId=" + selectedGroupIndex + "&phoneList="
+                            + phoneNumbers;
+                    ExistingMembersClient restClient = new ExistingMembersClient(this);
+                    restClient.execute(new String[]{searchQuery});
+                }
+            }
 
-            String searchQuery = "/fetchInviteList?groupId=" + selectedGroupIndex + "&phoneList="
-                    + phoneBuffer.toString();
 
-            ExistingMembersClient restClient = new ExistingMembersClient(this);
-            restClient.execute(new String[]{searchQuery});
         } else {
             Intent intent = new Intent(this, RetryActivity.class);
             startActivity(intent);
@@ -284,7 +288,7 @@ public class InviteMembersActivity extends Activity implements
 
     @Override
     public void onBackPressed() {
-        Intent intent = new Intent(this, HomeActivity.class);
+        Intent intent = new Intent(this, HomeGroupActivity.class);
         startActivity(intent);
     }
 
@@ -354,25 +358,29 @@ public class InviteMembersActivity extends Activity implements
                 if (userList != null) {
                     List<User> users = userList.getUsers();
                     if (users != null && !users.isEmpty()) {
-                        for (User user : users) {
-                            Map<String, User> memberMap = new HashMap<String, User>();
-                            memberMap.put(user.getPhone(), user);
-                            membersList.add(memberMap);
-                        }
-
-                        if (!membersList.isEmpty()) {
-                            filteredList = new ArrayList<Map<String, User>>();
-                            filteredList.addAll(membersList);
-                            adapter.setData(filteredList);
-                            membersGridView.setAdapter(adapter);
-                            membersGridView.setVisibility(GridView.VISIBLE);
-                        }
+                        populateUsers(users);
                     }
                 }
             }
             pDlg.dismiss();
         }
 
+    }
+
+    private void populateUsers(List<User> users) {
+        for (User user : users) {
+            Map<String, User> memberMap = new HashMap<String, User>();
+            memberMap.put(user.getPhone(), user);
+            membersList.add(memberMap);
+        }
+
+        if (!membersList.isEmpty()) {
+            filteredList = new ArrayList<Map<String, User>>();
+            filteredList.addAll(membersList);
+            adapter.setData(filteredList);
+            membersGridView.setAdapter(adapter);
+            membersGridView.setVisibility(GridView.VISIBLE);
+        }
     }
 
 
