@@ -98,6 +98,7 @@ public class ExpenseListAdapter extends BaseAdapter {
             options.inPurgeable = true;
             options.inInputShareable = true;
             options.inPreferredConfig = Bitmap.Config.RGB_565;
+            
             WeakReference<Bitmap> imageBitmapReference = new WeakReference<Bitmap>(BitmapFactory.decodeByteArray(image, 0,
                     image.length, options));
             /*Bitmap img = BitmapFactory.decodeByteArray(image, 0, image.length);*/
