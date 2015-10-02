@@ -169,7 +169,7 @@ public class UserGroupsActivity extends Fragment implements AdapterView.OnItemCl
         @Override
         protected void onPreExecute() {
 
-            showProgressDialog();
+            //showProgressDialog();
 
         }
 
@@ -221,7 +221,7 @@ public class UserGroupsActivity extends Fragment implements AdapterView.OnItemCl
             } else {
                 setEmptyMessage();
             }
-            pDlg.dismiss();
+           // pDlg.dismiss();
         }
 
     }

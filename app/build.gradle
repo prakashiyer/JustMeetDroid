@@ -32,4 +32,5 @@ dependencies {
     compile files('src/main/libs/gcm.jar')
     compile files('src/main/libs/apache-commons-lang.jar')
     compile files('src/main/libs/httpmime-4.2.6.jar')
+    compile files('src/main/libs/spring-core-3.2.3.RELEASE.jar')
 }

@@ -35,6 +35,9 @@ import org.apache.http.HttpHost;
 import org.apache.http.HttpResponse;
 import org.apache.http.client.HttpClient;
 import org.apache.http.client.methods.HttpGet;
+import org.apache.http.client.methods.HttpPost;
+import org.apache.http.entity.mime.MultipartEntity;
+import org.apache.http.entity.mime.content.StringBody;
 import org.apache.http.impl.client.DefaultHttpClient;
 import org.apache.http.util.EntityUtils;
 
@@ -107,7 +110,6 @@ public class ViewExistingMembersActivity extends Activity implements
                             break;
                         case Phone.TYPE_HOME:
                             phoneList.add(phoneNumber);
-                            System.out.println("Phone: " + phoneNumber);
                             break;
                         case Phone.TYPE_WORK:
                             phoneList.add(phoneNumber);
@@ -124,17 +126,17 @@ public class ViewExistingMembersActivity extends Activity implements
             phones.close();
 
             if(!phoneList.isEmpty()){
-                String phoneNumbers = JMUtil.listToCommaDelimitedString(phoneList);
+                String phoneNumbers = org.springframework.util.StringUtils.collectionToCommaDelimitedString(phoneList);
                 UserDAO userDAO = new UserDAO(context);
-                List<User> users = userDAO.fetchUsers(phoneNumbers);
+                String[] phoneArray = new String[phoneList.size()];
+                List<User> users = userDAO.fetchUsers(phoneList.toArray(phoneArray));
                 if (users != null && !users.isEmpty()) {
                     populateUserList(users);
                 } else {
                     Log.i(TAG, "No Members in local DB!");
-                    String searchQuery = "/fetchExistingUsers?phoneList="
-                            + phoneNumbers;
+                    String searchQuery = "/fetchExistingUsers";
                     ExistingMembersClient restClient = new ExistingMembersClient(this);
-                    restClient.execute(new String[]{searchQuery});
+                    restClient.execute(new String[]{searchQuery, phoneNumbers});
                 }
             }
         } else {
@@ -321,11 +323,14 @@ public class ViewExistingMembersActivity extends Activity implements
             // HttpHost target = new HttpHost(TARGET_HOST);
             HttpHost target = new HttpHost(JMConstants.TARGET_HOST, 8080);
             HttpClient client = new DefaultHttpClient();
-            HttpGet get = new HttpGet(path);
+            HttpPost post = new HttpPost(path);
             HttpEntity results = null;
 
             try {
-                HttpResponse response = client.execute(target, get);
+                MultipartEntity entity = new MultipartEntity();
+                entity.addPart("phoneList", new StringBody(params[1]));
+                post.setEntity(entity);
+                HttpResponse response = client.execute(target, post);
                 results = response.getEntity();
                 String result = EntityUtils.toString(results);
                 return result;
@@ -340,6 +345,7 @@ public class ViewExistingMembersActivity extends Activity implements
 
 
             if (response != null) {
+                Log.d(TAG, response);
                 XStream userXstream = new XStream();
                 userXstream.alias("UserList", UserList.class);
                 userXstream.addImplicitCollection(UserList.class, "users");

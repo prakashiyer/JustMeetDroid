@@ -268,7 +268,7 @@ public class ViewExistingGroupsActivity extends Activity implements
         @Override
         protected void onPreExecute() {
 
-            showProgressDialog();
+           // showProgressDialog();
 
         }
 
@@ -327,7 +327,7 @@ public class ViewExistingGroupsActivity extends Activity implements
                     }
                 }
             }
-            pDlg.dismiss();
+            //pDlg.dismiss();
         }
 
     }

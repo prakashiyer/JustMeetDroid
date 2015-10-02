@@ -7,6 +7,7 @@ import android.database.sqlite.SQLiteDatabase;
 import android.util.Log;
 
 import com.justmeet.entity.Plan;
+import com.justmeet.util.JMUtil;
 
 import org.apache.commons.lang.StringUtils;
 
@@ -84,6 +85,7 @@ public class PlanDAO extends JMDatabaseHandler {
         SQLiteDatabase db = this.getWritableDatabase();
         Log.w("Updating Plan", "Details: " + planId);
         int rows = db.update(PLANS_TABLE, values, where, whereArgs);
+        db.close(); // Closing database connection
         if (rows != 1) {
             Log.w("Plan", "Update failed");
             return false;
@@ -99,6 +101,7 @@ public class PlanDAO extends JMDatabaseHandler {
         SQLiteDatabase db = this.getWritableDatabase();
         Log.w("Updating Plan rsvp", "Details: " + planId);
         int rows = db.delete(PLANS_TABLE, where, whereArgs);
+        db.close(); // Closing database connection
         if (rows != 1) {
             Log.w("Plan rsvp", "User Image upload has failed");
             return false;
@@ -144,6 +147,7 @@ public class PlanDAO extends JMDatabaseHandler {
         SQLiteDatabase db = this.getWritableDatabase();
         Log.w("Updating Plan rsvp", "Details: " + planId);
         int rows = db.update(PLANS_TABLE, values, where, whereArgs);
+        db.close(); // Closing database connection
         if (rows != 1) {
             Log.w("Plan rsvp", "User Image upload has failed");
         }
@@ -176,17 +180,26 @@ public class PlanDAO extends JMDatabaseHandler {
             int membersInvitedIndex = cursor.getColumnIndex(MEMBERS_INVITED);
 
             String id = cursor.getString(idIndex);
+            Log.w("Checking Plan", "Id: " + id);
             String title = cursor.getString(titleIndex);
+            Log.w("Checking Plan", "title: " + title);
             String start_time = cursor.getString(startIndex);
+            Log.w("Checking Plan", "start: " + start_time);
             String location = cursor.getString(locationIndex);
+            Log.w("Checking Plan", "location: " + location);
             String membersAttending = cursor.getString(membersAttendingIndex);
+            Log.w("Checking Plan", "members attending: " + membersAttending);
             List<String> membersAttendingList = Arrays.asList(StringUtils.split(membersAttending, ","));
             String creator = cursor.getString(creatorIndex);
+            Log.w("Checking Plan", "creator: " + creator);
             String end_time = cursor.getString(endIndex);
+            Log.w("Checking Plan", "end: " + end_time);
             String groupsInvited = cursor.getString(groupsInvitedIndex);
             List<String> groupsInvitedList = Arrays.asList(StringUtils.split(groupsInvited, ","));
+            Log.w("Checking Plan", "groups: " + groupsInvited);
             String membersInvited = cursor.getString(membersInvitedIndex);
             List<String> membersInvitedList = Arrays.asList(StringUtils.split(membersInvited, ","));
+            Log.w("Checking Plan", "members: " + membersInvited);
 
             return new Plan(id, title, start_time, location, membersAttendingList,
                     creator, end_time, groupsInvitedList, membersInvitedList);
@@ -226,14 +239,17 @@ public class PlanDAO extends JMDatabaseHandler {
         String startTime = String.valueOf(calendar.get(Calendar.YEAR)) + "-"
                 + strMon + "-" + strdt + " " + strhr + ":" + strMin + ":00";
 
+        String[] localDates = JMUtil.createLocalToGmtTime(startTime);
+
+
         String where = MEMBERS_ATTENDING + " like ? and " + START_TIME + " > ?";
-        String[] whereArgs = {"%"+phone+"%", startTime};
+        String[] whereArgs = {"%"+phone+"%", localDates[0] +" "+ localDates[1]};
         String groupBy = null;
         String having = null;
         String order = START_TIME + " ASC";
 
         SQLiteDatabase db = this.getWritableDatabase();
-        Log.w("Checking User", "Details: " + phone);
+        Log.w("Checking User", "Details: " + phone+"/"+startTime);
         Cursor cursor = db.query(PLANS_TABLE, result_columns, where,
                 whereArgs, groupBy, having, order);
         List<Plan> plans = new ArrayList<Plan>();
@@ -384,7 +400,7 @@ public class PlanDAO extends JMDatabaseHandler {
                 + ":00";
         endCal.add(Calendar.DATE, -14);
 
-        int smonth = endCal.get(Calendar.MONTH) + 1;
+        int smonth = endCal.get(Calendar.MONTH);
         int sdate = endCal.get(Calendar.DATE);
         int shour = endCal.get(Calendar.HOUR_OF_DAY);
         int smin = endCal.get(Calendar.MINUTE);
@@ -411,17 +427,23 @@ public class PlanDAO extends JMDatabaseHandler {
                 + ":" + strsMin
                 + ":00";
 
+        String[] localStartDates = JMUtil.createLocalToGmtTime(startTime);
+        String[] localEndDates = JMUtil.createLocalToGmtTime(endTime);
         String where = MEMBERS_ATTENDING + " like ? and " + START_TIME + " > ? and " + START_TIME + " < ?";
-        String[] whereArgs = {"%"+phone+"%", startTime, endTime};
+        String[] whereArgs = {"%"+phone+"%", localStartDates[0]+" "+localStartDates[1], localEndDates[0] +" "+localEndDates[1]};
         String groupBy = null;
         String having = null;
         String order = START_TIME + " DESC";
 
+        Log.w("Checking User", "Start date: " + localStartDates[0]+" "+localStartDates[1]);
+        Log.w("Checking User", "End date: " + localEndDates[0] +" "+localEndDates[1]);
         SQLiteDatabase db = this.getWritableDatabase();
         Log.w("Checking User", "Details: " + phone);
+        fetchPlan("29");
         Cursor cursor = db.query(PLANS_TABLE, result_columns, where,
                 whereArgs, groupBy, having, order);
         List<Plan> plans = new ArrayList<Plan>();
+
         if (cursor != null && cursor.moveToFirst()) {
             while (!cursor.isAfterLast()) {
                 int idIndex = cursor.getColumnIndex(PLAN_ID);
@@ -575,6 +597,7 @@ public class PlanDAO extends JMDatabaseHandler {
         SQLiteDatabase db = this.getWritableDatabase();
         Log.w("Updating Plan", "Details: " + id);
         int rows = db.update(PLANS_TABLE, values, where, whereArgs);
+        db.close(); // Closing database connection
         if (rows != 1) {
             Log.w("Plan", "Update failed");
             return false;
@@ -591,6 +614,7 @@ public class PlanDAO extends JMDatabaseHandler {
         SQLiteDatabase db = this.getWritableDatabase();
         Log.w("Updating Plan", "Details: " + id);
         int rows = db.update(PLANS_TABLE, values, where, whereArgs);
+        db.close(); // Closing database connection
         if (rows != 1) {
             Log.w("Plan", "Update failed");
             return false;

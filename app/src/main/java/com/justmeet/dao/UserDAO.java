@@ -201,20 +201,26 @@ public class UserDAO extends JMDatabaseHandler {
         db.close();
     }
 
-    public List<User> fetchUsers(String phoneNumbers) {
+    public List<User> fetchUsers(String[] phoneNumbers) {
         String[] result_columns = new String[]{USER_ID, USER_NAME, USER_PHONE,
                 USER_IMAGE, USER_GROUPS_IDS};
 
-
-
-        String where = USER_PHONE + " in (?)";
-        String[] whereArgs = {phoneNumbers};
+        StringBuffer stringBuff = new StringBuffer();
+        int length = phoneNumbers.length;
+        for (int i=0; i<length; i++){
+            stringBuff.append("?");
+            if(i < length - 1){
+                stringBuff.append(",");
+            }
+        }
+        String where = USER_PHONE + " in ("+stringBuff.toString()+")";
+        String[] whereArgs = phoneNumbers;
         String groupBy = null;
         String having = null;
         String order = null;
 
         SQLiteDatabase db = this.getWritableDatabase();
-        Log.w("Checking User", "Users List: " + phoneNumbers);
+        Log.w("Checking User", "Users List: " + phoneNumbers.length);
         Cursor cursor = db.query(USER_TABLE, result_columns, where,
                 whereArgs, groupBy, having, order);
         List<User> users = new ArrayList<User>();
@@ -231,17 +237,17 @@ public class UserDAO extends JMDatabaseHandler {
                 byte[] image = cursor.getBlob(imageIndex);
                 String groupIds = cursor.getString(groupIdsIndex);
                 List<String> groups = null;
-                if (!groupIds.equals("")) {
+                if (groupIds != null && !groupIds.equals("")) {
                     groups = Arrays.asList(groupIds.split(","));
                 }
                 User user = new User(id, name, phone, groups, image, false);
+                Log.w("Found User", phone);
                 users.add(user);
                 cursor.moveToNext();
             }
         }
         cursor.close();
         db.close();
-        Log.w("Checking Users", "User Not authorized.");
         return users;
     }
 

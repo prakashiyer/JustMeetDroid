@@ -5,6 +5,8 @@ import android.content.Context;
 import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
 
+import org.apache.commons.lang.StringUtils;
+
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.Date;
@@ -52,15 +54,22 @@ public class JMUtil {
     public static String listToCommaDelimitedString(List<String> list) {
         StringBuffer stringBuff2 = new StringBuffer();
         int size2 = list.size();
+        System.out.println("Size List " + size2);
 
         for (int i = 0; i < size2; i++) {
+            String value = list.get(i);
             //stringBuff2.append("'");
-            stringBuff2.append(list.get(i));
+            stringBuff2.append(value);
             //stringBuff2.append("'");
-            if (i != size2 - 1) {
+            if (i < (size2-1)) {
                 stringBuff2.append(",");
+            } else {
+                System.out.println("Value: "+value);
+                System.out.println("Value of I: "+i);
             }
         }
+        System.out.println("String size: "+stringBuff2.toString().length());
+        System.out.println("String return: "+stringBuff2.toString());
         return stringBuff2.toString();
     }
 

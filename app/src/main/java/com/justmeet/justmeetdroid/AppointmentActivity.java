@@ -34,6 +34,7 @@ import org.apache.http.client.HttpClient;
 import org.apache.http.client.methods.HttpGet;
 import org.apache.http.impl.client.DefaultHttpClient;
 import org.apache.http.util.EntityUtils;
+import org.springframework.util.StringUtils;
 
 public class AppointmentActivity extends FragmentActivity {
     private static final String TAG = "Appointment Activity";
@@ -231,7 +232,7 @@ public class AppointmentActivity extends FragmentActivity {
                 xstream.addImplicitCollection(Plan.class, "groupsInvited", "groupsInvited", String.class);
                 Plan plan = (Plan) xstream.fromXML(response);
                 if (plan != null) {
-                    CalendarHelper calendarHelper = new CalendarHelper(mContext);
+
                     String startTime = plan.getStartTime();
                     String[] startPlanTime = null;
                     if (startTime != null) {
@@ -242,26 +243,21 @@ public class AppointmentActivity extends FragmentActivity {
                     if (endTime != null) {
                         endPlanTime = JMUtil.createGmtToLocalTime(endTime);
                     }
-                    calendarHelper.execute(new String[]{startPlanTime[0] + " " + startPlanTime[1],
-                            String.valueOf(plan.getTitle()), plan.getLocation(), "", "", "create", endPlanTime[0], endPlanTime[1]});
-                    PlanDAO planDAO = new PlanDAO(mContext);
+                    addPlanToCalendar(plan, startPlanTime, endPlanTime);
+
                     SharedPreferences prefs = getSharedPreferences("Prefs",
                             Activity.MODE_PRIVATE);
-                    String groupList = prefs.getString("selectedGroups", "");
-                    String phoneList = prefs.getString("selectedIndividuals", "");
-                    planDAO.addPlan(String.valueOf(plan.getId()), plan.getTitle(),
+                    PlanDAO planDAO = new PlanDAO(mContext);
+                    boolean success = planDAO.addPlan(String.valueOf(plan.getId()), plan.getTitle(),
                             startTime, plan.getLocation(),
                             plan.getCreator(), plan.getCreator(), endTime,
-                            groupList, phoneList);
+                            StringUtils.collectionToCommaDelimitedString(plan.getGroupsInvited()),
+                            StringUtils.collectionToCommaDelimitedString(plan.getMembersInvited()));
+                    Log.i(TAG, "Plan added successfully: "+success);
 
                     SharedPreferences.Editor editor = prefs.edit();
                     editor.putString("selectedPlanIndex", String.valueOf(plan.getId()));
                     editor.apply();
-                    //TODO Remove
-                    Plan dbPlan = planDAO.fetchPlan(plan.getId());
-                    if(dbPlan != null){
-                        Log.i(TAG, "Plan added successfully: "+dbPlan.getTitle());
-                    }
                     pDlg.dismiss();
                     Intent intent = new Intent(mContext, HomeViewPlanActivity.class);
                     startActivity(intent);
@@ -271,6 +267,12 @@ public class AppointmentActivity extends FragmentActivity {
                 }
             }
 
+        }
+
+        private void addPlanToCalendar(Plan plan, String[] startPlanTime, String[] endPlanTime) {
+            CalendarHelper calendarHelper = new CalendarHelper(mContext);
+            calendarHelper.execute(new String[]{startPlanTime[0] + " " + startPlanTime[1],
+                    String.valueOf(plan.getTitle()), plan.getLocation(), "", "", "create", endPlanTime[0], endPlanTime[1]});
         }
 
     }

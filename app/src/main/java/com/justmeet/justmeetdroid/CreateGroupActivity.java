@@ -83,6 +83,7 @@ public class CreateGroupActivity extends FragmentActivity {
     public void selectGroupImage(View view) {
         try {
             Intent galleryIntent = new Intent(Intent.ACTION_PICK, android.provider.MediaStore.Images.Media.EXTERNAL_CONTENT_URI);
+            galleryIntent.putExtra("crop",true);
             startActivityForResult(Intent.createChooser(galleryIntent, "Select an image"), PICK_IMAGE);
         } catch (Exception e) {
             Toast.makeText(getApplicationContext(), "Image selection failed",
@@ -103,7 +104,7 @@ public class CreateGroupActivity extends FragmentActivity {
         String groupName = groupNameField.getText().toString();
         SharedPreferences.Editor editor = prefs.edit();
         editor.putString("groupName", groupName);
-
+        Log.i(TAG, "Member: "+members);
         GroupImageClient imageRestClient = new GroupImageClient(
                 this);
 
@@ -136,7 +137,9 @@ public class CreateGroupActivity extends FragmentActivity {
                         }
 
                         if (selectedImageUri != null) {
-                            cropImage(selectedImageUri);
+                            bitmap = BitmapFactory.decodeStream(getContentResolver().openInputStream(selectedImageUri));
+                            decodeFile(null);
+                            //cropImage(selectedImageUri);
                         } else {
                             bitmap = null;
                         }
@@ -171,15 +174,18 @@ public class CreateGroupActivity extends FragmentActivity {
         Intent cropIntent = new Intent("com.android.camera.action.CROP");
         try
         {
-            cropIntent.setType("image/*");
-            cropIntent.setData(picUri);
-            cropIntent.putExtra("crop", "true");
-            cropIntent.putExtra("return-data", true);
-            cropIntent.putExtra("aspectX", 300);
-            cropIntent.putExtra("aspectY", 300);
-            cropIntent.putExtra("outputX", 300);
-            cropIntent.putExtra("outputY", 300);
-            startActivityForResult(cropIntent, 2);
+            if(cropIntent != null){
+                cropIntent.setType("image/*");
+                cropIntent.setData(picUri);
+                cropIntent.putExtra("crop", "true");
+                cropIntent.putExtra("return-data", true);
+                cropIntent.putExtra("aspectX", 300);
+                cropIntent.putExtra("aspectY", 300);
+                cropIntent.putExtra("outputX", 300);
+                cropIntent.putExtra("outputY", 300);
+                startActivityForResult(cropIntent, 2);
+            }
+
         }
         catch (ActivityNotFoundException anfe)
         {
@@ -264,6 +270,7 @@ public class CreateGroupActivity extends FragmentActivity {
 
             String method = params[0];
             String path = JMConstants.SERVICE_PATH + "/" + method;
+            Log.i(TAG, "PaTH: "+path);
 
             // HttpHost target = new HttpHost(TARGET_HOST);
             HttpHost target = new HttpHost(JMConstants.TARGET_HOST, 8080);
@@ -285,6 +292,7 @@ public class CreateGroupActivity extends FragmentActivity {
                 String result = EntityUtils.toString(results);
                 return result;
             } catch (Exception e) {
+                e.printStackTrace();
 
             }
             return null;

@@ -157,7 +157,7 @@ public class UserHistoryActivity extends Fragment implements AdapterView.OnItemC
         @Override
         protected void onPreExecute() {
 
-            showProgressDialog();
+            //showProgressDialog();
 
         }
 
@@ -213,7 +213,7 @@ public class UserHistoryActivity extends Fragment implements AdapterView.OnItemC
             } else {
                 setEmptyMessage();
             }
-            pDlg.dismiss();
+            //pDlg.dismiss();
         }
     }
 }

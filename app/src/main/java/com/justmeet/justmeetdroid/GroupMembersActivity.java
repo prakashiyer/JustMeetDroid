@@ -84,7 +84,8 @@ public class GroupMembersActivity extends Fragment implements
             List<String> members = group.getMembers();
             if (members != null && !members.isEmpty()) {
                 UserDAO userDAO = new UserDAO(activity);
-                List<User> users = userDAO.fetchUsers(JMUtil.listToCommaDelimitedString(members));
+                String[] membersArray = new String[members.size()];
+                List<User> users = userDAO.fetchUsers(members.toArray(membersArray));
                 if (users != null && !users.isEmpty()) {
                     for (User user : users) {
                         Map<String, User> memberMap = new HashMap<String, User>();

@@ -102,6 +102,7 @@ public class UserImageActivity extends Activity {
     public void selectImage(View view) {
         try {
             Intent galleryIntent = new Intent(Intent.ACTION_PICK, android.provider.MediaStore.Images.Media.EXTERNAL_CONTENT_URI);
+            galleryIntent.putExtra("crop", true);
             startActivityForResult(Intent.createChooser(galleryIntent, "Select an image"), PICK_IMAGE);
         } catch (Exception e) {
             Toast.makeText(getApplicationContext(), "Image selection failed",
@@ -116,9 +117,14 @@ public class UserImageActivity extends Activity {
         button.setTextColor(getResources().getColor(R.color.click_button_2));
         try {
             if (bitmap == null) {
-                Toast.makeText(getApplicationContext(), "Please select image",
+                /*Toast.makeText(getApplicationContext(), "Please select image",
                         Toast.LENGTH_SHORT).show();
-                button.setTextColor(getResources().getColor(R.color.button_text));
+                button.setTextColor(getResources().getColor(R.color.button_text));*/
+                Toast.makeText(getApplicationContext(),
+                        "You can use the menu to change image later.", Toast.LENGTH_LONG)
+                        .show();
+                Intent intentNew = new Intent(this, HomeActivity.class);
+                startActivity(intentNew);
             } else {
                 SharedPreferences prefs = getSharedPreferences("Prefs",
                         Activity.MODE_PRIVATE);
@@ -179,7 +185,7 @@ public class UserImageActivity extends Activity {
             cropIntent.putExtra("outputY", 300);
             startActivityForResult(cropIntent, 2);
         }
-        catch (ActivityNotFoundException anfe)
+        catch (Exception anfe)
         {
             String errorMessage = "Whoops - your device doesn't support the crop action!";
             System.out.println("error occured : " + errorMessage);
@@ -212,7 +218,9 @@ public class UserImageActivity extends Activity {
                         }
 
                         if (selectedImageUri != null) {
-                            cropImage(selectedImageUri);
+                            bitmap = BitmapFactory.decodeStream(getContentResolver().openInputStream(selectedImageUri));
+                            decodeFile(null);
+                            //cropImage(selectedImageUri);
                         } else {
                             bitmap = null;
                         }

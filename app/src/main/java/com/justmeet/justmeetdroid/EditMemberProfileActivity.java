@@ -48,6 +48,7 @@ import org.apache.http.util.EntityUtils;
 
 import java.io.ByteArrayOutputStream;
 import java.io.File;
+import java.io.FileNotFoundException;
 
 
 /**
@@ -61,6 +62,7 @@ public class EditMemberProfileActivity extends Activity {
     Context context;
     private Bitmap bitmap;
     private byte[] croppedImage;
+    Uri passedUri;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -127,6 +129,7 @@ public class EditMemberProfileActivity extends Activity {
         try {
 
             Intent galleryIntent = new Intent(Intent.ACTION_PICK, android.provider.MediaStore.Images.Media.EXTERNAL_CONTENT_URI);
+            galleryIntent.putExtra("crop", true);
             startActivityForResult(Intent.createChooser(galleryIntent, "Select an image"), PICK_IMAGE);
 
         } catch (Exception e) {
@@ -161,7 +164,9 @@ public class EditMemberProfileActivity extends Activity {
                         }
 
                         if (selectedImageUri != null) {
-                            cropImage(selectedImageUri);
+                            bitmap = BitmapFactory.decodeStream(getContentResolver().openInputStream(selectedImageUri));
+                            decodeFile(null);
+                            //cropImage(selectedImageUri);
                         } else {
                             bitmap = null;
                         }
@@ -173,6 +178,7 @@ public class EditMemberProfileActivity extends Activity {
                 }
                 break;
             case 2: {
+                System.out.println("Reached case 2");
                 if(data != null) {
                     Bundle extras = data.getExtras();
                     if(extras != null){
@@ -180,6 +186,18 @@ public class EditMemberProfileActivity extends Activity {
                         decodeFile(null);
                         break;
                     }
+                } else {
+                    BitmapFactory.Options o2 = new BitmapFactory.Options();
+                    System.out.println("PASSED URI: " +passedUri);
+                    System.out.println("ENC PATH : " +passedUri.getEncodedPath());
+                    System.out.println("PATH: " +passedUri.getPath());
+                    try {
+                        bitmap = BitmapFactory.decodeStream(getContentResolver().openInputStream(passedUri));
+                    } catch (Exception e) {
+                        e.printStackTrace();
+                    }
+                    decodeFile(null);
+                    break;
                 }
                 Toast.makeText(getApplicationContext(), "Please select an image.",
                         Toast.LENGTH_LONG).show();
@@ -192,10 +210,13 @@ public class EditMemberProfileActivity extends Activity {
 
     public void cropImage(Uri picUri)
     {
-        System.out.println("IN CROP IMAGE METHOD " + picUri);
+        System.out.println("IN CROP EDIT IMAGE METHOD " + picUri);
         Intent cropIntent = new Intent("com.android.camera.action.CROP");
         try
         {
+            passedUri = picUri;
+            String newPath = picUri.getPath() + "_1";
+            //passedUri = Uri.parse(newPath);
             cropIntent.setDataAndNormalize(picUri);
             cropIntent.putExtra("crop", "true");
             cropIntent.putExtra("return-data", true);
@@ -203,9 +224,12 @@ public class EditMemberProfileActivity extends Activity {
             cropIntent.putExtra("aspectY", 300);
             cropIntent.putExtra("outputX", 300);
             cropIntent.putExtra("outputY", 300);
+            cropIntent.putExtra("output", picUri);
+            System.out.println("Starting Crop Image Activity ");
             startActivityForResult(cropIntent, 2);
+            System.out.println("Done cropping ");
         }
-        catch (ActivityNotFoundException anfe)
+        catch (Exception anfe)
         {
             String errorMessage = "Whoops - your device doesn't support the crop action!";
             System.out.println("error occured : " + errorMessage);

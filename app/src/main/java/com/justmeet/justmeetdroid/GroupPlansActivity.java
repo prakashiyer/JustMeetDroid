@@ -72,9 +72,17 @@ public class GroupPlansActivity extends Fragment implements OnItemClickListener 
             planListView.setOnItemClickListener(this);
             GroupDAO groupDAO = new GroupDAO(activity);
             Group group = groupDAO.fetchGroup(selectedGroupIndex);
-            if (phone.equals(group.getAdmin())) {
-                isAdmin = true;
+            if(group != null) {
+                if (phone.equals(group.getAdmin())) {
+                    isAdmin = true;
+                }
+            } else {
+                Log.i(TAG, "No Group in local DB!");
+                String searchQuery1 = "/fetchGroup?groupIndex=" + selectedGroupIndex;
+                GroupPlansClient restClient1 = new GroupPlansClient(activity);
+                restClient1.execute(new String[]{searchQuery1});
             }
+
             PlanDAO planDAO = new PlanDAO(activity);
             List<Plan> plans = planDAO.fetchGroupUpcomingPlans(selectedGroupIndex);
             if (plans != null && !plans.isEmpty()) {
@@ -91,11 +99,7 @@ public class GroupPlansActivity extends Fragment implements OnItemClickListener 
                     // Click event for single list row
                 }
             } else {
-                Log.i(TAG, "No Group Plans in local DB!");
-                String searchQuery1 = "/fetchGroup?groupIndex=" + selectedGroupIndex;
-                GroupPlansClient restClient1 = new GroupPlansClient(activity);
-                restClient1.execute(new String[]{searchQuery1});
-
+                Log.i(TAG, "No Group Plans in local DB! " + selectedGroupIndex);
                 String searchQuery2 = "/fetchGroupPlans?groupIndex=" + selectedGroupIndex;
                 GroupPlansClient restClient2 = new GroupPlansClient(activity);
                 restClient2.execute(new String[]{searchQuery2});
@@ -129,7 +133,7 @@ public class GroupPlansActivity extends Fragment implements OnItemClickListener 
         @Override
         protected void onPreExecute() {
 
-            showProgressDialog();
+            //showProgressDialog();
 
         }
 
@@ -211,7 +215,7 @@ public class GroupPlansActivity extends Fragment implements OnItemClickListener 
                     planLabel.setText("No upcoming plans in this group");
                 }
             }
-            pDlg.dismiss();
+            //pDlg.dismiss();
         }
 
     }

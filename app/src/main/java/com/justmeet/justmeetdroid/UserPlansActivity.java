@@ -35,6 +35,9 @@ import org.apache.http.HttpHost;
 import org.apache.http.HttpResponse;
 import org.apache.http.client.HttpClient;
 import org.apache.http.client.methods.HttpGet;
+import org.apache.http.client.methods.HttpPost;
+import org.apache.http.entity.mime.MultipartEntity;
+import org.apache.http.entity.mime.content.StringBody;
 import org.apache.http.impl.client.DefaultHttpClient;
 import org.apache.http.params.BasicHttpParams;
 import org.apache.http.params.HttpConnectionParams;
@@ -97,6 +100,7 @@ public class UserPlansActivity extends Fragment implements AdapterView.OnItemCli
                 int len = phoneNumber.length();
                 if (len >= 10 && StringUtils.isNumeric(phoneNumber)) {
                     phoneNumber = phoneNumber.substring(len - 10);
+                    Log.i(TAG, phoneNumber);
                     switch (phoneType) {
                         case ContactsContract.CommonDataKinds.Phone.TYPE_MOBILE:
                             phoneList.add(phoneNumber);
@@ -119,11 +123,11 @@ public class UserPlansActivity extends Fragment implements AdapterView.OnItemCli
             phones.close();
 
             if(!phoneList.isEmpty()) {
-                String phoneNumbers = JMUtil.listToCommaDelimitedString(phoneList);
-                String searchQuery = "/fetchExistingUsers?phoneList="
-                        + phoneNumbers;
+                String phoneNumbers = org.springframework.util.StringUtils.collectionToCommaDelimitedString(phoneList);
+                phoneNumbers.replaceAll(" ","");
+                String searchQuery = "/fetchExistingUsers";
                 ExistingMembersClient restClient = new ExistingMembersClient(activity);
-                restClient.execute(new String[]{searchQuery});
+                restClient.execute(new String[]{searchQuery, phoneNumbers});
             }
 
             PlanDAO planDAO = new PlanDAO(activity);
@@ -133,14 +137,11 @@ public class UserPlansActivity extends Fragment implements AdapterView.OnItemCli
                 populatePlanDetails(plans);
             } else {
                 Log.i(TAG, "No Plans in local DB!");
+                setEmptyMessage();
                 String searchQuery = "/fetchUpcomingPlans?phone=" + phone;
                 PlansClient restClient = new PlansClient(activity);
                 restClient.execute(new String[]{searchQuery});
             }
-
-
-
-
             return rootView;
         } else {
             Intent intent = new Intent(activity, RetryActivity.class);
@@ -220,7 +221,7 @@ public class UserPlansActivity extends Fragment implements AdapterView.OnItemCli
         @Override
         protected void onPreExecute() {
 
-            showProgressDialog();
+            //showProgressDialog();
 
         }
 
@@ -233,12 +234,12 @@ public class UserPlansActivity extends Fragment implements AdapterView.OnItemCli
             HttpParams httpParameters = new BasicHttpParams();
             // Set the timeout in milliseconds until a connection is established.
             // The default value is zero, that means the timeout is not used.
-            int timeoutConnection = 3000;
-            HttpConnectionParams.setConnectionTimeout(httpParameters, timeoutConnection);
+            int timeoutConnection = 0;
+            //HttpConnectionParams.setConnectionTimeout(httpParameters, timeoutConnection);
             // Set the default socket timeout (SO_TIMEOUT)
-            // in milliseconds which is the timeout for waiting for data.
-            int timeoutSocket = 5000;
-            HttpConnectionParams.setSoTimeout(httpParameters, timeoutSocket);
+            // in milliseconds which is the timeout for waiting for data.gr
+            int timeoutSocket = 0;
+            //HttpConnectionParams.setSoTimeout(httpParameters, timeoutSocket);
             HttpClient client = new DefaultHttpClient(httpParameters);
 
             HttpGet get = new HttpGet(path);
@@ -251,7 +252,7 @@ public class UserPlansActivity extends Fragment implements AdapterView.OnItemCli
                 return result;
             } catch (Exception e) {
                 Log.e(TAG, "Operation time out " +e);
-                Toast.makeText(mContext, "Operation timed out", Toast.LENGTH_LONG).show();
+                //Toast.makeText(mContext, "Operation timed out", Toast.LENGTH_LONG).show();
             }
             return null;
         }
@@ -264,6 +265,12 @@ public class UserPlansActivity extends Fragment implements AdapterView.OnItemCli
                 xstream.alias("PlanList", PlanList.class);
                 xstream.alias("plans", Plan.class);
                 xstream.addImplicitCollection(PlanList.class, "plans");
+                xstream.alias("membersAttending", String.class);
+                xstream.addImplicitCollection(Plan.class, "membersAttending", "membersAttending", String.class);
+                xstream.alias("membersInvited", String.class);
+                xstream.addImplicitCollection(Plan.class, "membersInvited", "membersInvited", String.class);
+                xstream.alias("groupsInvited", String.class);
+                xstream.addImplicitCollection(Plan.class, "groupsInvited", "groupsInvited", String.class);
                 PlanList planList = (PlanList) xstream.fromXML(response);
 
                 if (planList != null && planList.getPlans() != null) {
@@ -281,7 +288,7 @@ public class UserPlansActivity extends Fragment implements AdapterView.OnItemCli
             } else {
                 setEmptyMessage();
             }
-            pDlg.dismiss();
+            //pDlg.dismiss();
         }
     }
 
@@ -303,20 +310,33 @@ public class UserPlansActivity extends Fragment implements AdapterView.OnItemCli
         protected String doInBackground(String... params) {
 
             String path = JMConstants.SERVICE_PATH + params[0];
+            Log.i(TAG, path);
 
             // HttpHost target = new HttpHost(TARGET_HOST);
             HttpHost target = new HttpHost(JMConstants.TARGET_HOST, 8080);
-            HttpClient client = new DefaultHttpClient();
-            HttpGet get = new HttpGet(path);
+            HttpParams httpParameters = new BasicHttpParams();
+            // Set the timeout in milliseconds until a connection is established.
+            // The default value is zero, that means the timeout is not used.
+            //int timeoutConnection = 3000;
+            //HttpConnectionParams.setConnectionTimeout(httpParameters, timeoutConnection);
+            // Set the default socket timeout (SO_TIMEOUT)
+            // in milliseconds which is the timeout for waiting for data.gr
+            //int timeoutSocket = 5000;
+            //HttpConnectionParams.setSoTimeout(httpParameters, timeoutSocket);
+            HttpClient client = new DefaultHttpClient(httpParameters);
+            HttpPost post = new HttpPost(path);
             HttpEntity results = null;
 
             try {
-                HttpResponse response = client.execute(target, get);
+                MultipartEntity entity = new MultipartEntity();
+                entity.addPart("phoneList", new StringBody(params[1]));
+                post.setEntity(entity);
+                HttpResponse response = client.execute(target, post);
                 results = response.getEntity();
                 String result = EntityUtils.toString(results);
                 return result;
             } catch (Exception e) {
-
+                e.printStackTrace();
             }
             return null;
         }
@@ -326,6 +346,7 @@ public class UserPlansActivity extends Fragment implements AdapterView.OnItemCli
 
 
             if (response != null) {
+                Log.d(TAG, response);
                 XStream userXstream = new XStream();
                 userXstream.alias("UserList", UserList.class);
                 userXstream.addImplicitCollection(UserList.class, "users");

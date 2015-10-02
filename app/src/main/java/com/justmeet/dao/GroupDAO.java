@@ -156,6 +156,7 @@ public class GroupDAO extends JMDatabaseHandler {
         SQLiteDatabase db = this.getWritableDatabase();
         Log.w("Updating Group", "Details: " + groupId);
         int rows = db.update(GROUPS_TABLE, values, where, whereArgs);
+        db.close(); // Closing database connection
         if (rows != 1) {
             Log.w("Group", "Update failed");
             return false;
@@ -172,6 +173,7 @@ public class GroupDAO extends JMDatabaseHandler {
         SQLiteDatabase db = this.getWritableDatabase();
         Log.w("Updating Group", "Details: " + groupId);
         int rows = db.update(GROUPS_TABLE, values, where, whereArgs);
+        db.close(); // Closing database connection
         if (rows != 1) {
             Log.w("Group", "Update failed");
             return false;
@@ -188,6 +190,7 @@ public class GroupDAO extends JMDatabaseHandler {
         SQLiteDatabase db = this.getWritableDatabase();
         Log.w("Updating Group", "Details: " + groupId);
         int rows = db.update(GROUPS_TABLE, values, where, whereArgs);
+        db.close(); // Closing database connection
         if (rows != 1) {
             Log.w("Group", "Update failed");
             return false;
@@ -203,6 +206,7 @@ public class GroupDAO extends JMDatabaseHandler {
         SQLiteDatabase db = this.getWritableDatabase();
         Log.w("Delete Group", "Details: " + groupId);
         int rows = db.delete(GROUPS_TABLE, where, whereArgs);
+        db.close(); // Closing database connection
         if (rows != 1) {
             Log.w("Delete Group", "failed");
             return false;

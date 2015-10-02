@@ -105,6 +105,7 @@ public class ExpenseDAO extends JMDatabaseHandler {
         SQLiteDatabase db = this.getWritableDatabase();
         Log.w("Updating Expense", "Details: " + expenseId);
         int rows = db.update(EXP_TABLE, values, where, whereArgs);
+        db.close(); // Closing database connection
         if (rows != 1) {
             Log.w("Update Expense", "failed");
         }
@@ -118,6 +119,7 @@ public class ExpenseDAO extends JMDatabaseHandler {
         SQLiteDatabase db = this.getWritableDatabase();
         Log.w("Delete Expense", "Details: " + expenseId);
         int rows = db.delete(EXP_TABLE, where, whereArgs);
+        db.close(); // Closing database connection
         if (rows != 1) {
             Log.w("Delete Expense", "failed");
             return false;

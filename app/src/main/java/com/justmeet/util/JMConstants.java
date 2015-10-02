@@ -5,6 +5,7 @@ package com.justmeet.util;
  */
 public interface JMConstants {
     public static final String TARGET_HOST = "ec2-54-69-50-2.us-west-2.compute.amazonaws.com";
+    //public static final String TARGET_HOST = "localhost";
 
     public static final String SENDER_ID = "358164918628";
 
