@@ -71,6 +71,7 @@ public class UserGroupsActivity extends Fragment implements AdapterView.OnItemCl
             if (groups != null && !groups.isEmpty()) {
                 populateGroupDetails(groups);
             } else {
+                setEmptyMessage();
                 Log.i(TAG, "No Groups in local DB!");
                 String searchQuery = "/fetchExistingGroups?phone=" + phone;
                 GroupsClient restClient = new GroupsClient(activity);
